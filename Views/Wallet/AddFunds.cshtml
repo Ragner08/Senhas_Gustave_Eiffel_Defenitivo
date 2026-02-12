@@ -1,0 +1,73 @@
+@model WalletViewModel
+@{
+    ViewData["Title"] = "Adicionar Fundos";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>Adicionar Fundos
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="add-funds-icon">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                        <p class="text-muted">Insira o valor que deseja adicionar à sua carteira virtual.</p>
+                    </div>
+
+                    <form asp-action="AddFunds" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Valor" class="form-label"></label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">€</span>
+                                <input asp-for="Valor" class="form-control" type="number" step="0.01" min="0.01" max="1000" placeholder="0,00" />
+                            </div>
+                            <span asp-validation-for="Valor" class="text-danger"></span>
+                            <div class="form-text">Valor mínimo: 0,01€ | Valor máximo: 1000,00€</div>
+                        </div>
+
+                        <div class="quick-amounts mb-4">
+                            <label class="form-label">Valores Rápidos:</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(5)">5€</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(10)">10€</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(20)">20€</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(50)">50€</button>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Confirmar
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Nota:</strong> Este é um sistema de carteira virtual. Não são processados pagamentos reais.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function setAmount(amount) {
+            document.getElementById('Valor').value = amount;
+        }
+    </script>
+}

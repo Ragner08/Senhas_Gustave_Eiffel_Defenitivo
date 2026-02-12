@@ -1,0 +1,72 @@
+================================================================================
+SENHAS DE ALMOÇO EPGE - INSTRUÇÕES DE CONFIGURAÇÃO
+================================================================================
+
+1. ABRIR O PROJETO
+------------------
+- Abre a pasta "Senhas_Gustave_Eiffel" no Visual Studio 2022 ou VS Code
+
+2. CONFIGURAR A BASE DE DADOS (SQL Server LocalDB)
+--------------------------------------------------
+No Package Manager Console (Visual Studio) ou Terminal:
+
+   Add-Migration InitialCreate
+   Update-Database
+
+Ou usando CLI:
+
+   dotnet ef migrations add InitialCreate
+   dotnet ef database update
+
+3. INSTALAR DEPENDÊNCIAS JAVASCRIPT
+-----------------------------------
+No terminal, executa:
+
+   libman restore
+
+(Se não tiveres o LibMan: dotnet tool install -g Microsoft.Web.LibraryManager.Cli)
+
+4. EXECUTAR O PROJETO
+---------------------
+- Pressiona F5 no Visual Studio
+- Ou executa: dotnet run
+
+5. LOGIN INICIAL
+----------------
+Admin:
+   Email: admin@epge.pt
+   Password: Admin123!
+
+Funcionário:
+   Email: funcionario@epge.pt
+   Password: Func123!
+
+================================================================================
+ESTRUTURA DO PROJETO
+================================================================================
+
+Controllers/     -> Controladores MVC
+Models/          -> Modelos de dados
+Views/           -> Vistas Razor (.cshtml)
+Data/            -> Contexto da BD e Seed
+wwwroot/         -> CSS, JS, imagens
+
+================================================================================
+ROLES DO SISTEMA
+================================================================================
+
+- Admin         -> Acesso total, cria utilizadores
+- Funcionário   -> Cria refeições, vê relatórios
+- Escalão A     -> Preço: 2€
+- Escalão B     -> Preço: 3€
+- Sem escalão   -> Preço: 4€
+
+================================================================================
+IMPORTANTE
+================================================================================
+
+- Não apagues a pasta "Migrations" depois de criada
+- Se der erro na BD: Delete-Migration e cria de novo
+- O seed de dados (admin/funcionário) é feito automaticamente na primeira vez
+
+================================================================================

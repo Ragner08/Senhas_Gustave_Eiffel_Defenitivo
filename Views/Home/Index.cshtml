@@ -1,0 +1,213 @@
+@{
+    ViewData["Title"] = "Início";
+    var upcomingBookings = ViewBag.UpcomingBookings as List<Booking> ?? new List<Booking>();
+    var todayMeal = ViewBag.TodayMeal as Meal;
+}
+
+<div class="container mt-4">
+    <div class="welcome-section">
+        <h1 class="display-5">
+            <i class="bi bi-hand-wave me-2"></i>Bem-vindo, @ViewBag.UserName!
+        </h1>
+        <p class="lead">Sistema de Gestão de Senhas de Almoço - Gustave Eiffel</p>
+        <span class="badge bg-primary fs-6">@ViewBag.UserRole</span>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Today's Meal Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-utensils me-2"></i>Refeição de Hoje
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (todayMeal != null)
+                    {
+                        <div class="meal-info">
+                            @if (!string.IsNullOrEmpty(todayMeal.Sopa))
+                            {
+                                <div class="meal-item">
+                                    <span class="meal-label">Sopa:</span>
+                                    <span class="meal-value">@todayMeal.Sopa</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(todayMeal.PratoPrincipal))
+                            {
+                                <div class="meal-item">
+                                    <span class="meal-label">Prato Principal:</span>
+                                    <span class="meal-value">@todayMeal.PratoPrincipal</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(todayMeal.Vegetariano))
+                            {
+                                <div class="meal-item">
+                                    <span class="meal-label">Vegetariano:</span>
+                                    <span class="meal-value">@todayMeal.Vegetariano</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(todayMeal.Sobremesa))
+                            {
+                                <div class="meal-item">
+                                    <span class="meal-label">Sobremesa:</span>
+                                    <span class="meal-value">@todayMeal.Sobremesa</span>
+                                </div>
+                            }
+                        </div>
+                        <hr />
+                        <div class="prices">
+                            <small class="text-muted">
+                                Preços: A @todayMeal.PrecoEscalaoA.ToString("C") |
+                                B @todayMeal.PrecoEscalaoB.ToString("C") |
+                                Sem @todayMeal.PrecoSemEscalao.ToString("C")
+                            </small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-info-circle fs-1"></i>
+                            <p class="mt-2">Nenhuma refeição definida para hoje.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-wallet2 me-2"></i>Minha Carteira
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="wallet-balance-display">
+                        <span class="balance-label">Saldo Atual</span>
+                        <span class="balance-value @(ViewBag.WalletBalance > 0 ? "text-success" : "text-muted")">
+                            @(((decimal)ViewBag.WalletBalance).ToString("C"))
+                        </span>
+                    </div>
+                    <hr />
+                    <a asp-controller="Wallet" asp-action="AddFunds" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Adicionar Fundos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Bookings -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-check me-2"></i>Próximas Marcações
+                    </h5>
+                    <a asp-controller="Calendar" asp-action="Index" class="btn btn-light btn-sm">
+                        <i class="bi bi-calendar-plus me-1"></i> Marcar Senha
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (upcomingBookings.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Escalão</th>
+                                        <th>Valor Pago</th>
+                                        <th>Estado</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in upcomingBookings)
+                                    {
+                                        <tr>
+                                            <td>@booking.DataMarcacao.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <span class="badge bg-info">@booking.EscalaoUtilizado</span>
+                                            </td>
+                                            <td>@booking.ValorPago.ToString("C")</td>
+                                            <td>
+                                                @if (booking.Confirmado)
+                                                {
+                                                    <span class="badge bg-success"><i class="bi bi-check me-1"></i>Confirmado</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning text-dark">Pendente</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-calendar-x fs-1"></i>
+                            <p class="mt-2">Não tem marcações futuras.</p>
+                            <a asp-controller="Calendar" asp-action="Index" class="btn btn-primary">
+                                <i class="bi bi-calendar-plus me-2"></i>Marcar Agora
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning me-2"></i>Ações Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a asp-controller="Calendar" asp-action="Index" class="btn btn-outline-primary w-100 py-3">
+                                <i class="bi bi-calendar3 fs-3 d-block mb-2"></i>
+                                Ver Calendário
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Bookings" asp-action="Index" class="btn btn-outline-success w-100 py-3">
+                                <i class="bi bi-ticket-perforated fs-3 d-block mb-2"></i>
+                                Minhas Senhas
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Wallet" asp-action="Index" class="btn btn-outline-info w-100 py-3">
+                                <i class="bi bi-wallet2 fs-3 d-block mb-2"></i>
+                                Ver Carteira
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Wallet" asp-action="AddFunds" class="btn btn-outline-warning w-100 py-3">
+                                <i class="bi bi-plus-circle fs-3 d-block mb-2"></i>
+                                Adicionar Fundos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

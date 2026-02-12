@@ -1,0 +1,97 @@
+@model Meal
+@{
+    ViewData["Title"] = "Criar Refeição";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>Criar Refeição para @Model.Data.ToString("dd/MM/yyyy")
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateMeal" method="post">
+                        <input type="hidden" asp-for="Data" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Sopa" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-cup-hot"></i></span>
+                                    <input asp-for="Sopa" class="form-control" placeholder="Ex: Sopa de Legumes" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PratoPrincipal" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-egg-fried"></i></span>
+                                    <input asp-for="PratoPrincipal" class="form-control" placeholder="Ex: Bacalhau com Natas" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Vegetariano" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-flower1"></i></span>
+                                    <input asp-for="Vegetariano" class="form-control" placeholder="Ex: Tofu Grelhado" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Sobremesa" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-cake"></i></span>
+                                    <input asp-for="Sobremesa" class="form-control" placeholder="Ex: Mousse de Chocolate" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <h6><i class="bi bi-cash me-2"></i>Preços por Escalão</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="PrecoEscalaoA" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">€</span>
+                                    <input asp-for="PrecoEscalaoA" class="form-control" type="number" step="0.01" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="PrecoEscalaoB" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">€</span>
+                                    <input asp-for="PrecoEscalaoB" class="form-control" type="number" step="0.01" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="PrecoSemEscalao" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">€</span>
+                                    <input asp-for="PrecoSemEscalao" class="form-control" type="number" step="0.01" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check me-2"></i>Criar Refeição
+                            </button>
+                            <a asp-action="DayDetails" asp-route-date="@Model.Data.ToString("yyyy-MM-dd")" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

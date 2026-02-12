@@ -1,0 +1,214 @@
+@model Meal
+@{
+    ViewData["Title"] = "Detalhes do Dia";
+    var date = (DateTime)ViewBag.Date;
+    var isFuncionario = (bool)ViewBag.IsFuncionario;
+    var isPast = (bool)ViewBag.IsPast;
+    var hasBooking = (bool)ViewBag.HasBooking;
+    var hasMeal = (bool)ViewBag.HasMeal;
+    var userEscalao = (string)ViewBag.UserEscalao;
+    var walletBalance = (decimal)ViewBag.WalletBalance;
+    var price = (decimal)ViewBag.Price;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-calendar-day me-2"></i>@date.ToString("dddd, dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("pt-PT"))
+        </h2>
+        <a asp-action="Index" asp-route-year="@date.Year" asp-route-month="@date.Month" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Voltar ao Calendário
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Meal Info -->
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-utensils me-2"></i>Refeição do Dia
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (hasMeal)
+                    {
+                        <div class="meal-details">
+                            @if (!string.IsNullOrEmpty(Model.Sopa))
+                            {
+                                <div class="meal-item-detail">
+                                    <div class="meal-icon">
+                                        <i class="bi bi-cup-hot"></i>
+                                    </div>
+                                    <div class="meal-content">
+                                        <h6>Sopa</h6>
+                                        <p>@Model.Sopa</p>
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.PratoPrincipal))
+                            {
+                                <div class="meal-item-detail">
+                                    <div class="meal-icon">
+                                        <i class="bi bi-egg-fried"></i>
+                                    </div>
+                                    <div class="meal-content">
+                                        <h6>Prato Principal</h6>
+                                        <p>@Model.PratoPrincipal</p>
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Vegetariano))
+                            {
+                                <div class="meal-item-detail">
+                                    <div class="meal-icon">
+                                        <i class="bi bi-flower1"></i>
+                                    </div>
+                                    <div class="meal-content">
+                                        <h6>Opção Vegetariana</h6>
+                                        <p>@Model.Vegetariano</p>
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Sobremesa))
+                            {
+                                <div class="meal-item-detail">
+                                    <div class="meal-icon">
+                                        <i class="bi bi-cake"></i>
+                                    </div>
+                                    <div class="meal-content">
+                                        <h6>Sobremesa</h6>
+                                        <p>@Model.Sobremesa</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <hr />
+
+                        <div class="prices-section">
+                            <h6><i class="bi bi-cash me-2"></i>Preços</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="price-card @(userEscalao == "Escalão A" ? "active" : "")">
+                                        <span class="price-label">Escalão A</span>
+                                        <span class="price-value">@Model.PrecoEscalaoA.ToString("C")</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="price-card @(userEscalao == "Escalão B" ? "active" : "")">
+                                        <span class="price-label">Escalão B</span>
+                                        <span class="price-value">@Model.PrecoEscalaoB.ToString("C")</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="price-card @(userEscalao == "Sem escalão" ? "active" : "")">
+                                        <span class="price-label">Sem Escalão</span>
+                                        <span class="price-value">@Model.PrecoSemEscalao.ToString("C")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-info-circle fs-1"></i>
+                            <p class="mt-3">Nenhuma refeição definida para este dia.</p>
+                            @if (isFuncionario && !isPast)
+                            {
+                                <a asp-action="CreateMeal" asp-route-date="@date.ToString("yyyy-MM-dd")" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Definir Refeição
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-ticket-perforated me-2"></i>Ações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (isPast)
+                    {
+                        <div class="alert alert-secondary">
+                            <i class="bi bi-clock-history me-2"></i>
+                            Este dia já passou. Não é possível realizar marcações.
+                        </div>
+                    }
+                    else if (hasBooking)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <strong>Senha já marcada!</strong>
+                            <p class="mb-0 mt-2">Já tem uma senha marcada para este dia.</p>
+                        </div>
+                    }
+                    else if (!hasMeal)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Refeição não disponível</strong>
+                            <p class="mb-0 mt-2">Aguarde até que a refeição seja definida.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="booking-section">
+                            <div class="wallet-info mb-3">
+                                <p class="mb-1">Saldo na Carteira:</p>
+                                <h5 class="@(walletBalance >= price ? "text-success" : "text-danger")">
+                                    @walletBalance.ToString("C")
+                                </h5>
+                            </div>
+
+                            <div class="price-info mb-3">
+                                <p class="mb-1">Preço para o seu escalão (@userEscalao):</p>
+                                <h4 class="text-primary">@price.ToString("C")</h4>
+                            </div>
+
+                            @if (walletBalance >= price)
+                            {
+                                <form asp-action="BookMeal" method="post">
+                                    <input type="hidden" name="date" value="@date.ToString("yyyy-MM-dd")" />
+                                    <input type="hidden" name="escalao" value="@userEscalao" />
+                                    <button type="submit" class="btn btn-success w-100 btn-lg">
+                                        <i class="bi bi-check-circle me-2"></i>Marcar Senha
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                    Saldo insuficiente!
+                                </div>
+                                <a asp-controller="Wallet" asp-action="AddFunds" class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-circle me-2"></i>Carregar Carteira
+                                </a>
+                            }
+                        </div>
+                    }
+
+                    @if (isFuncionario && hasMeal)
+                    {
+                        <hr />
+                        <div class="admin-actions">
+                            <h6><i class="bi bi-gear me-2"></i>Ações de Funcionário</h6>
+                            <a asp-action="EditMeal" asp-route-id="@Model.Id" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="bi bi-pencil me-2"></i>Editar Refeição
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

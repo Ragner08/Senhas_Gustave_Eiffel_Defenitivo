@@ -1,0 +1,26 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Erro";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <h1 class="display-4 text-danger">Ocorreu um erro</h1>
+            <p class="lead">Pedimos desculpe pelo inconveniente.</p>
+            <hr />
+            @if (Model.ShowRequestId)
+            {
+                <p>
+                    <strong>ID do Pedido:</strong> <code>@Model.RequestId</code>
+                </p>
+            }
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+                <i class="bi bi-house me-2"></i>Voltar ao Início
+            </a>
+        </div>
+    </div>
+</div>

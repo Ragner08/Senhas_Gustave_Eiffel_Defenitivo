@@ -1,0 +1,182 @@
+@model Booking
+@{
+    ViewData["Title"] = "Detalhes da Senha";
+    var meal = ViewBag.Meal as Meal;
+    var isAdmin = (bool)ViewBag.IsAdmin;
+    var isFuncionario = (bool)ViewBag.IsFuncionario;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-ticket-perforated me-2"></i>Detalhes da Senha
+        </h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Booking Info -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Informações da Marcação
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <span class="info-label">Número da Senha:</span>
+                        <span class="info-value">#@Model.Id</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data da Refeição:</span>
+                        <span class="info-value">@Model.DataMarcacao.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Escalão Utilizado:</span>
+                        <span class="info-value">
+                            <span class="badge bg-info">@Model.EscalaoUtilizado</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Valor Pago:</span>
+                        <span class="info-value text-success fw-bold">@Model.ValorPago.ToString("C")</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Estado:</span>
+                        <span class="info-value">
+                            @if (Model.Confirmado)
+                            {
+                                <span class="badge bg-success"><i class="bi bi-check me-1"></i>Confirmado</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data de Marcação:</span>
+                        <span class="info-value">@Model.DataRegisto.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    @if (isAdmin || isFuncionario)
+                    {
+                        <div class="info-item">
+                            <span class="info-label">Utilizador:</span>
+                            <span class="info-value">
+                                <i class="bi bi-person me-1 text-primary"></i>
+                                @(Model.User?.Nome ?? "N/A") (@(Model.User?.Email ?? "N/A"))
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Meal Info -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-utensils me-2"></i>Refeição do Dia
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (meal != null)
+                    {
+                        <div class="meal-details-view">
+                            @if (!string.IsNullOrEmpty(meal.Sopa))
+                            {
+                                <div class="meal-detail-item">
+                                    <i class="bi bi-cup-hot text-primary"></i>
+                                    <div>
+                                        <span class="meal-label">Sopa:</span>
+                                        <span class="meal-value">@meal.Sopa</span>
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(meal.PratoPrincipal))
+                            {
+                                <div class="meal-detail-item">
+                                    <i class="bi bi-egg-fried text-primary"></i>
+                                    <div>
+                                        <span class="meal-label">Prato Principal:</span>
+                                        <span class="meal-value">@meal.PratoPrincipal</span>
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(meal.Vegetariano))
+                            {
+                                <div class="meal-detail-item">
+                                    <i class="bi bi-flower1 text-primary"></i>
+                                    <div>
+                                        <span class="meal-label">Vegetariano:</span>
+                                        <span class="meal-value">@meal.Vegetariano</span>
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(meal.Sobremesa))
+                            {
+                                <div class="meal-detail-item">
+                                    <i class="bi bi-cake text-primary"></i>
+                                    <div>
+                                        <span class="meal-label">Sobremesa:</span>
+                                        <span class="meal-value">@meal.Sobremesa</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-info-circle fs-1"></i>
+                            <p class="mt-2">Informação da refeição não disponível.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    @if (Model.DataMarcacao > DateTime.Today)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="bi bi-gear me-2"></i>Ações
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Esta marcação pode ser cancelada. O valor será reembolsado à carteira do utilizador.</p>
+                        @if (isAdmin || isFuncionario)
+                        {
+                            <form asp-action="CancelBookingAdmin" method="post" class="d-inline"
+                                  onsubmit="return confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado.');">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-x-circle me-2"></i>Cancelar Marcação
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-controller="Calendar" asp-action="CancelBooking" method="post" class="d-inline"
+                                  onsubmit="return confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado.');">
+                                <input type="hidden" name="bookingId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-x-circle me-2"></i>Cancelar Marcação
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,128 @@
+@model CalendarViewModel
+@{
+    ViewData["Title"] = "Calendário";
+    var culture = new System.Globalization.CultureInfo("pt-PT");
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-calendar3 me-2"></i>Calendário de Senhas
+        </h2>
+        <div class="wallet-info">
+            <span class="badge bg-success fs-6">
+                <i class="bi bi-wallet2 me-1"></i> @Model.WalletBalance.ToString("C")
+            </span>
+        </div>
+    </div>
+
+    <!-- Calendar Navigation -->
+    <div class="calendar-navigation">
+        <a asp-action="Index" asp-route-year="@Model.Year" asp-route-month="@(Model.Month - 1 == 0 ? 12 : Model.Month - 1)"
+           asp-route-year="@(Model.Month - 1 == 0 ? Model.Year - 1 : Model.Year)"
+           class="btn btn-outline-primary">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+        <h3 class="month-title">@char.ToUpper(Model.MonthName[0])@Model.MonthName.Substring(1) @Model.Year</h3>
+        <a asp-action="Index" asp-route-year="@Model.Year" asp-route-month="@(Model.Month + 1 == 13 ? 1 : Model.Month + 1)"
+           asp-route-year="@(Model.Month + 1 == 13 ? Model.Year + 1 : Model.Year)"
+           class="btn btn-outline-primary">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <div class="day-header">Seg</div>
+            <div class="day-header">Ter</div>
+            <div class="day-header">Qua</div>
+            <div class="day-header">Qui</div>
+            <div class="day-header">Sex</div>
+            <div class="day-header">Sáb</div>
+            <div class="day-header">Dom</div>
+        </div>
+        <div class="calendar-body">
+            @foreach (var day in Model.Days)
+            {
+                <a asp-action="DayDetails" asp-route-date="@day.Date.ToString("yyyy-MM-dd")"
+                   class="calendar-day @(day.IsCurrentMonth ? "" : "other-month")
+                                 @(day.IsToday ? "today" : "")
+                                 @(day.IsPast ? "past" : "")
+                                 @(day.HasBooking ? "has-booking" : "")
+                                 @(day.HasMeal ? "has-meal" : "")">
+                    <div class="day-number">@day.Date.Day</div>
+                    <div class="day-indicators">
+                        @if (day.HasMeal)
+                        {
+                            <span class="indicator meal-indicator" title="Refeição disponível">
+                                <i class="bi bi-utensils"></i>
+                            </span>
+                        }
+                        @if (day.HasBooking)
+                        {
+                            <span class="indicator booking-indicator" title="Senha marcada">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </span>
+                        }
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="calendar-legend mt-4">
+        <div class="legend-item">
+            <span class="legend-box today"></span>
+            <span>Hoje</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-box has-meal"></span>
+            <span>Refeição Disponível</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-box has-booking"></span>
+            <span>Senha Marcada</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-box past"></span>
+            <span>Dia Passado</span>
+        </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Como Funciona
+                    </h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><i class="bi bi-check me-2 text-success"></i>Clique num dia para ver detalhes</li>
+                        <li><i class="bi bi-check me-2 text-success"></i>Marque a sua senha com o seu escalão</li>
+                        <li><i class="bi bi-check me-2 text-success"></i>O valor será descontado da carteira</li>
+                        <li><i class="bi bi-check me-2 text-success"></i>Só pode marcar uma senha por dia</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-wallet2 me-2"></i>O Meu Escalão
+                    </h6>
+                    <p class="mb-2">
+                        <strong>Escalão Atual:</strong>
+                        <span class="badge bg-primary">@Model.UserEscalao</span>
+                    </p>
+                    <p class="mb-0 text-muted">
+                        O preço da sua senha é calculado com base no seu escalão.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

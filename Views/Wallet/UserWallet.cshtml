@@ -1,0 +1,132 @@
+@model AdminUserWalletViewModel
+@{
+    ViewData["Title"] = "Carteira do Utilizador";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-wallet2 me-2"></i>Carteira de @Model.UserName
+        </h2>
+        <a asp-controller="Account" asp-action="UserManagement" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- User Info & Balance -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person me-2"></i>Informações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted">Nome:</label>
+                        <p class="fw-bold mb-0">@Model.UserName</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted">Email:</label>
+                        <p class="fw-bold mb-0">@Model.UserEmail</p>
+                    </div>
+                    <hr />
+                    <div class="text-center">
+                        <label class="text-muted">Saldo Atual:</label>
+                        <h3 class="@(Model.SaldoAtual > 0 ? "text-success" : "text-muted")">
+                            @Model.SaldoAtual.ToString("C")
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Funds Form -->
+            <div class="card shadow mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>Adicionar Fundos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddFundsAdmin" method="post">
+                        <input type="hidden" name="userId" value="@Model.UserId" />
+                        <div class="mb-3">
+                            <label class="form-label">Valor (€)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">€</span>
+                                <input type="number" name="valor" class="form-control" step="0.01" min="0.01" required />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check me-2"></i>Adicionar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions -->
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>Histórico de Transações
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Transacoes.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Descrição</th>
+                                        <th class="text-end">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var transaction in Model.Transacoes)
+                                    {
+                                        <tr>
+                                            <td>@transaction.DataTransacao.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                @if (transaction.Tipo == "Carregamento")
+                                                {
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-arrow-down me-1"></i>@transaction.Tipo
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">
+                                                        <i class="bi bi-arrow-up me-1"></i>@transaction.Tipo
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>@transaction.Descricao</td>
+                                            <td class="text-end">
+                                                <span class="@(transaction.Valor > 0 ? "text-success" : "text-danger") fw-bold">
+                                                    @(transaction.Valor > 0 ? "+" : "")@transaction.Valor.ToString("C")
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2">Nenhuma transação encontrada.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

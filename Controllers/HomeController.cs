@@ -25,35 +25,10 @@ namespace Senhas_Gustave_Eiffel.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        // MODIFICADO: Redireciona para o Calendário
+        public IActionResult Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var roles = await _userManager.GetRolesAsync(user);
-            ViewBag.UserName = user.Nome;
-            ViewBag.UserRole = roles.FirstOrDefault() ?? "Sem Role";
-            ViewBag.WalletBalance = user.WalletBalance;
-
-            // Get upcoming bookings
-            var upcomingBookings = await _context.Bookings
-                .Where(b => b.UserId == user.Id && b.DataMarcacao >= DateTime.Today)
-                .OrderBy(b => b.DataMarcacao)
-                .Take(5)
-                .ToListAsync();
-
-            ViewBag.UpcomingBookings = upcomingBookings;
-
-            // Get today's meal
-            var todayMeal = await _context.Meals
-                .FirstOrDefaultAsync(m => m.Data.Date == DateTime.Today);
-
-            ViewBag.TodayMeal = todayMeal;
-
-            return View();
+            return RedirectToAction("Index", "Calendar");
         }
 
         [AllowAnonymous]

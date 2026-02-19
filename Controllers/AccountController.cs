@@ -299,7 +299,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                // MODIFICADO: Redirecionar para o Calendário em vez da Home
+                return RedirectToAction(nameof(CalendarController.Index), "Calendar");
             }
         }
     }

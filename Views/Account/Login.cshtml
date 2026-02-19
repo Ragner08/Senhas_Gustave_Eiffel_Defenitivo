@@ -18,38 +18,39 @@
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <div class="logo-icon">
-                    <i class="bi bi-calendar-check"></i>
+                <div class="logo-container">
+                    <img src="~/images/logo_branca.png" alt="EPGE Logo" class="login-logo" />
                 </div>
-                <h1>Senhas de Almoço EPGE</h1>
-                <p class="subtitle">Gustave Eiffel</p>
+                <h1>Senhas de Almoço</h1>
+                <p class="subtitle">EPGE - Gustave Eiffel</p>
             </div>
 
             <div class="login-form">
-                <h2 class="text-center mb-4">Iniciar Sessão</h2>
+                <h2>Iniciar Sessão</h2>
 
                 <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
-                    <div class="form-floating mb-3">
+                    <div class="form-floating">
                         <input asp-for="Email" class="form-control" placeholder="nome@exemplo.pt" />
                         <label asp-for="Email"><i class="bi bi-envelope me-2"></i>Email</label>
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <span asp-validation-for="Email" class="invalid-feedback"></span>
                     </div>
 
-                    <div class="form-floating mb-3">
-                        <input asp-for="Password" class="form-control" placeholder="Palavra-passe" />
+                    <div class="form-floating">
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Palavra-passe" />
                         <label asp-for="Password"><i class="bi bi-lock me-2"></i>Palavra-passe</label>
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <span asp-validation-for="Password" class="invalid-feedback"></span>
                     </div>
 
-                    <div class="form-check mb-3">
+                    <div class="form-check">
                         <input asp-for="RememberMe" class="form-check-input" />
                         <label asp-for="RememberMe" class="form-check-label">Lembrar-me</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 btn-lg">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                    <button type="submit" class="btn-login">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Entrar
                     </button>
                 </form>
             </div>

@@ -80,7 +80,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                     IsToday = date.Date == DateTime.Today,
                     HasBooking = false,
                     HasMeal = meals.Any(m => m.Data.Date == date.Date),
-                    IsPast = date < DateTime.Today
+                    // MODIFICADO: IsPast inclui o dia atual (não permite marcação no mesmo dia)
+                    IsPast = date.Date <= DateTime.Today
                 });
             }
 
@@ -97,7 +98,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                     IsToday = date.Date == DateTime.Today,
                     HasBooking = booking != null,
                     HasMeal = meals.Any(m => m.Data.Date == date.Date),
-                    IsPast = date < DateTime.Today,
+                    // MODIFICADO: IsPast inclui o dia atual (não permite marcação no mesmo dia)
+                    IsPast = date.Date <= DateTime.Today,
                     BookingId = booking?.Id
                 });
             }
@@ -114,7 +116,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                     IsToday = date.Date == DateTime.Today,
                     HasBooking = false,
                     HasMeal = meals.Any(m => m.Data.Date == date.Date),
-                    IsPast = date < DateTime.Today
+                    // MODIFICADO: IsPast inclui o dia atual (não permite marcação no mesmo dia)
+                    IsPast = date.Date <= DateTime.Today
                 });
             }
 
@@ -155,7 +158,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             ViewBag.Date = date;
             ViewBag.IsFuncionario = isFuncionario || isAdmin;
-            ViewBag.IsPast = date < DateTime.Today;
+            // MODIFICADO: IsPast inclui o dia atual (não permite marcação no mesmo dia)
+            ViewBag.IsPast = date.Date < DateTime.Today;
             ViewBag.UserEscalao = user.Escalao;
             ViewBag.WalletBalance = user.WalletBalance;
             ViewBag.HasMeal = meal != null;
@@ -180,6 +184,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
+            }
+
+            // MODIFICADO: Verificar se a data é hoje ou anterior (proibido marcar)
+            if (date.Date <= DateTime.Today)
+            {
+                TempData["Error"] = "Não é possível marcar senhas para hoje ou datas passadas!";
+                return RedirectToAction(nameof(DayDetails), new { date });
             }
 
             // Check if user already has a booking for this day
@@ -265,8 +276,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return NotFound();
             }
 
-            // Only allow cancellation for future dates
-            if (booking.DataMarcacao <= DateTime.Today)
+            // Only allow cancellation for future dates (não permite cancelar hoje ou passado)
+            if (booking.DataMarcacao.Date <= DateTime.Today)
             {
                 TempData["Error"] = "Não é possível cancelar marcações para hoje ou datas passadas!";
                 return RedirectToAction(nameof(Index));
@@ -296,12 +307,20 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [Authorize(Roles = "Admin,Funcionário")]
         public IActionResult CreateMeal(DateTime date)
         {
+            // MODIFICADO: Não permitir criar refeição para hoje ou datas passadas
+            if (date.Date <= DateTime.Today)
+            {
+                TempData["Error"] = "Não é possível definir refeições para hoje ou datas passadas!";
+                return RedirectToAction(nameof(Index));
+            }
+
             var meal = new Meal
             {
                 Data = date,
-                PrecoEscalaoA = 2.00m,
-                PrecoEscalaoB = 3.00m,
-                PrecoSemEscalao = 4.00m
+                // Preços pré-definidos: Escalão A = 0€, Escalão B = 0,73€, Sem escalão = 1,46€
+                PrecoEscalaoA = 0.00m,
+                PrecoEscalaoB = 0.73m,
+                PrecoSemEscalao = 1.46m
             };
             return View(meal);
         }
@@ -311,6 +330,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateMeal(Meal meal)
         {
+            // MODIFICADO: Não permitir criar refeição para hoje ou datas passadas
+            if (meal.Data.Date <= DateTime.Today)
+            {
+                TempData["Error"] = "Não é possível definir refeições para hoje ou datas passadas!";
+                return View(meal);
+            }
+
             if (ModelState.IsValid)
             {
                 // Check if meal already exists for this day
@@ -346,6 +372,14 @@ namespace Senhas_Gustave_Eiffel.Controllers
             {
                 return NotFound();
             }
+
+            // MODIFICADO: Não permitir editar refeição para hoje ou datas passadas
+            if (meal.Data.Date <= DateTime.Today)
+            {
+                TempData["Error"] = "Não é possível editar refeições para hoje ou datas passadas!";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(meal);
         }
 
@@ -357,6 +391,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
             if (id != meal.Id)
             {
                 return NotFound();
+            }
+
+            // MODIFICADO: Não permitir editar refeição para hoje ou datas passadas
+            if (meal.Data.Date <= DateTime.Today)
+            {
+                TempData["Error"] = "Não é possível editar refeições para hoje ou datas passadas!";
+                return View(meal);
             }
 
             if (ModelState.IsValid)

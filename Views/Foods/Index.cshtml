@@ -1,0 +1,51 @@
+@model List<Senhas_Gustave_Eiffel.Models.FoodItem>
+@{
+    ViewData["Title"] = "Comidas Definidas";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-list-check me-2"></i>Comidas Definidas
+        </h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Adicionar Comida
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body p-0">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Nome</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var food in Model)
+                            {
+                                <tr>
+                                    <td>@food.Categoria</td>
+                                    <td>@food.Nome</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-inbox fs-1"></i>
+                    <p class="mt-2">Ainda não existem comidas definidas.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

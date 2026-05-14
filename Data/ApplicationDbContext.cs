@@ -14,6 +14,7 @@ namespace Senhas_Gustave_Eiffel.Data
         public DbSet<Meal> Meals { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<WalletTransaction> WalletTransactions { get; set; }
+        public DbSet<FoodItem> FoodItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

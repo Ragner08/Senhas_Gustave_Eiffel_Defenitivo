@@ -1,0 +1,52 @@
+@model Booking
+@{
+    ViewData["Title"] = "Editar Refeição";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil me-2"></i>Editar Refeição
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="UpdateMeal" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Utilizador</label>
+                            <input type="text" class="form-control" value="@Model.User?.Nome" disabled />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Data da Refeição</label>
+                            <input type="text" class="form-control" value="@Model.DataMarcacao.ToString("dd/MM/yyyy")" disabled />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Valor Pago</label>
+                            <input type="text" class="form-control" value="@Model.ValorPago.ToString("C")" disabled />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Escalão Utilizado</label>
+                            <input type="text" class="form-control" value="@Model.EscalaoUtilizado" disabled />
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Guardar
+                            </button>
+                            <a asp-action="DailyReport" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

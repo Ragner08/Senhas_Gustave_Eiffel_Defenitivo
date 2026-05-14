@@ -31,15 +31,15 @@
                 <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
-                    <div class="form-floating">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
                         <input asp-for="Email" class="form-control" placeholder="nome@exemplo.pt" />
-                        <label asp-for="Email"><i class="bi bi-envelope me-2"></i>Email</label>
                         <span asp-validation-for="Email" class="invalid-feedback"></span>
                     </div>
 
-                    <div class="form-floating">
-                        <input asp-for="Password" type="password" class="form-control" placeholder="Palavra-passe" />
-                        <label asp-for="Password"><i class="bi bi-lock me-2"></i>Palavra-passe</label>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Palavra-passe</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" />
                         <span asp-validation-for="Password" class="invalid-feedback"></span>
                     </div>
 

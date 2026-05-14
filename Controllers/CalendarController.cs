@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Senhas_Gustave_Eiffel.Data;
 using Senhas_Gustave_Eiffel.Models;
@@ -305,23 +306,24 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Funcionário")]
-        public IActionResult CreateMeal(DateTime date)
+        public async Task<IActionResult> CreateMeal(DateTime date)
         {
-            // MODIFICADO: Não permitir criar refeição para hoje ou datas passadas
-            if (date.Date <= DateTime.Today)
+            // MODIFICADO: Não permitir criar refeição para hoje, datas passadas ou fim de semana
+            if (date.Date <= DateTime.Today || date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
             {
-                TempData["Error"] = "Não é possível definir refeições para hoje ou datas passadas!";
+                TempData["Error"] = "Não é possível definir refeições para hoje, datas passadas ou fins de semana!";
                 return RedirectToAction(nameof(Index));
             }
 
             var meal = new Meal
             {
                 Data = date,
-                // Preços pré-definidos: Escalão A = 0€, Escalão B = 0,73€, Sem escalão = 1,46€
                 PrecoEscalaoA = 0.00m,
                 PrecoEscalaoB = 0.73m,
                 PrecoSemEscalao = 1.46m
             };
+
+            await PopulateFoodSelectListsAsync();
             return View(meal);
         }
 
@@ -330,10 +332,10 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateMeal(Meal meal)
         {
-            // MODIFICADO: Não permitir criar refeição para hoje ou datas passadas
-            if (meal.Data.Date <= DateTime.Today)
+            if (meal.Data.Date <= DateTime.Today || meal.Data.DayOfWeek == DayOfWeek.Saturday || meal.Data.DayOfWeek == DayOfWeek.Sunday)
             {
-                TempData["Error"] = "Não é possível definir refeições para hoje ou datas passadas!";
+                TempData["Error"] = "Não é possível definir refeições para hoje, datas passadas ou fins de semana!";
+                await PopulateFoodSelectListsAsync();
                 return View(meal);
             }
 
@@ -346,6 +348,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 if (existingMeal != null)
                 {
                     ModelState.AddModelError("", "Já existe uma refeição definida para este dia!");
+                    await PopulateFoodSelectListsAsync();
                     return View(meal);
                 }
 
@@ -360,7 +363,33 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return RedirectToAction(nameof(DayDetails), new { date = meal.Data });
             }
 
+            await PopulateFoodSelectListsAsync();
             return View(meal);
+        }
+
+        private async Task PopulateFoodSelectListsAsync()
+        {
+            var foods = await _context.Set<FoodItem>().ToListAsync();
+
+            ViewBag.SopaItems = foods
+                .Where(f => f.Categoria == "Sopa")
+                .Select(f => new SelectListItem(f.Nome, f.Nome))
+                .ToList();
+
+            ViewBag.PratoPrincipalItems = foods
+                .Where(f => f.Categoria == "Prato Principal")
+                .Select(f => new SelectListItem(f.Nome, f.Nome))
+                .ToList();
+
+            ViewBag.VegetarianoItems = foods
+                .Where(f => f.Categoria == "Vegetariano")
+                .Select(f => new SelectListItem(f.Nome, f.Nome))
+                .ToList();
+
+            ViewBag.SobremesaItems = foods
+                .Where(f => f.Categoria == "Sobremesa")
+                .Select(f => new SelectListItem(f.Nome, f.Nome))
+                .ToList();
         }
 
         [HttpGet]

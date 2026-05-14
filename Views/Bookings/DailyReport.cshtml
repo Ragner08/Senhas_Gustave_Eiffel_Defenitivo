@@ -141,6 +141,7 @@
                                 <th>Escalão</th>
                                 <th>Valor</th>
                                 <th>Hora da Marcação</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -157,6 +158,23 @@
                                     </td>
                                     <td>@booking.ValorPago.ToString("C")</td>
                                     <td>@booking.DataRegisto.ToString("HH:mm")</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="EditMeal" asp-route-id="@booking.Id" class="btn btn-info" title="Editar refeição">
+                                                <i class="bi bi-pencil me-1"></i>Editar
+                                            </a>
+                                            <form asp-action="UnmarkMeal" asp-route-bookingId="@booking.Id" method="post" style="display:inline;">
+                                                <button type="submit" class="btn btn-warning" title="Desmarcar refeição">
+                                                    <i class="bi bi-x-circle me-1"></i>Desmarcar
+                                                </button>
+                                            </form>
+                                            <form asp-action="DeleteMeal" asp-route-bookingId="@booking.Id" method="post" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja eliminar e fazer reembolso?');">
+                                                <button type="submit" class="btn btn-danger" title="Eliminar com reembolso">
+                                                    <i class="bi bi-trash me-1"></i>Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>

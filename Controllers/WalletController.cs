@@ -84,7 +84,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Funcionário")]
         public async Task<IActionResult> AllTransactions()
         {
             var transactions = await _context.WalletTransactions

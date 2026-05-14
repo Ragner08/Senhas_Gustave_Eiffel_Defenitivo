@@ -182,5 +182,118 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             return View(viewModel);
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Funcionário")]
+        public async Task<IActionResult> UnmarkMeal(int bookingId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var mealDate = booking.DataMarcacao.Date;
+
+            // Refund the user
+            if (booking.User != null)
+            {
+                booking.User.WalletBalance += booking.ValorPago;
+            }
+
+            // Create refund transaction
+            var transaction = new WalletTransaction
+            {
+                UserId = booking.UserId,
+                DataTransacao = DateTime.Now,
+                Tipo = "Reembolso",
+                Descricao = $"Reembolso da refeição de {booking.DataMarcacao:dd/MM/yyyy}",
+                Valor = booking.ValorPago
+            };
+
+            _context.WalletTransactions.Add(transaction);
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Refeição desmarcada e reembolso processado!";
+            return RedirectToAction("DailyReport", new { date = mealDate });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,Funcionário")]
+        public async Task<IActionResult> EditMeal(int id)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            return View(booking);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Funcionário")]
+        public async Task<IActionResult> UpdateMeal(int id)
+        {
+            var booking = await _context.Bookings
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var mealDate = booking.DataMarcacao.Date;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Refeição atualizada com sucesso!";
+            return RedirectToAction("DailyReport", new { date = mealDate });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Funcionário")]
+        public async Task<IActionResult> DeleteMeal(int bookingId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var mealDate = booking.DataMarcacao.Date;
+
+            // Refund the user
+            if (booking.User != null)
+            {
+                booking.User.WalletBalance += booking.ValorPago;
+            }
+
+            // Create refund transaction
+            var transaction = new WalletTransaction
+            {
+                UserId = booking.UserId,
+                DataTransacao = DateTime.Now,
+                Tipo = "Reembolso",
+                Descricao = $"Reembolso da refeição eliminada de {booking.DataMarcacao:dd/MM/yyyy}",
+                Valor = booking.ValorPago
+            };
+
+            _context.WalletTransactions.Add(transaction);
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Refeição eliminada e reembolso processado!";
+            return RedirectToAction("DailyReport", new { date = mealDate });
+        }
     }
 }

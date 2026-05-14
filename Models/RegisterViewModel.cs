@@ -14,7 +14,6 @@ namespace Senhas_Gustave_Eiffel.Models
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A palavra-passe é obrigatória")]
-        [StringLength(100, ErrorMessage = "A {0} deve ter pelo menos {2} caracteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Palavra-passe")]
         public string Password { get; set; } = string.Empty;

@@ -1,6 +1,11 @@
 @model Meal
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
     ViewData["Title"] = "Definir Refeição";
+    var sopaItems = ViewBag.SopaItems as List<SelectListItem> ?? new List<SelectListItem>();
+    var pratoPrincipalItems = ViewBag.PratoPrincipalItems as List<SelectListItem> ?? new List<SelectListItem>();
+    var vegetarianoItems = ViewBag.VegetarianoItems as List<SelectListItem> ?? new List<SelectListItem>();
+    var sobremesaItems = ViewBag.SobremesaItems as List<SelectListItem> ?? new List<SelectListItem>();
 }
 
 <div class="container mt-4">
@@ -9,10 +14,10 @@
             <div class="card">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
-                        <i class="bi bi-plus-circle me-2"></i>Definir Refeição
+                        <i class="bi bi-utensils me-2"></i>Definir Refeição
                     </h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body scrollable-form">
                     <form asp-action="CreateMeal" method="post">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
@@ -25,26 +30,66 @@
 
                         <div class="form-group">
                             <label asp-for="Sopa" class="form-label">Sopa</label>
-                            <input asp-for="Sopa" class="form-control" placeholder="Digite a sopa do dia" />
+                            @if (sopaItems.Any())
+                            {
+                                <select asp-for="Sopa" class="form-select" asp-items="sopaItems">
+                                    <option value="">-- Selecionar sopa --</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="Sopa" class="form-control" placeholder="Digite a sopa do dia" />
+                            }
                             <span asp-validation-for="Sopa" class="invalid-feedback"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="PratoPrincipal" class="form-label">Prato Principal</label>
-                            <input asp-for="PratoPrincipal" class="form-control" placeholder="Digite o prato principal" />
+                            @if (pratoPrincipalItems.Any())
+                            {
+                                <select asp-for="PratoPrincipal" class="form-select" asp-items="pratoPrincipalItems">
+                                    <option value="">-- Selecionar prato principal --</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="PratoPrincipal" class="form-control" placeholder="Digite o prato principal" />
+                            }
                             <span asp-validation-for="PratoPrincipal" class="invalid-feedback"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="Vegetariano" class="form-label">Opção Vegetariana</label>
-                            <input asp-for="Vegetariano" class="form-control" placeholder="Digite a opção vegetariana" />
+                            @if (vegetarianoItems.Any())
+                            {
+                                <select asp-for="Vegetariano" class="form-select" asp-items="vegetarianoItems">
+                                    <option value="">-- Selecionar opção vegetariana --</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="Vegetariano" class="form-control" placeholder="Digite a opção vegetariana" />
+                            }
                             <span asp-validation-for="Vegetariano" class="invalid-feedback"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="Sobremesa" class="form-label">Sobremesa</label>
-                            <input asp-for="Sobremesa" class="form-control" placeholder="Digite a sobremesa" />
+                            @if (sobremesaItems.Any())
+                            {
+                                <select asp-for="Sobremesa" class="form-select" asp-items="sobremesaItems">
+                                    <option value="">-- Selecionar sobremesa --</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="Sobremesa" class="form-control" placeholder="Digite a sobremesa" />
+                            }
                             <span asp-validation-for="Sobremesa" class="invalid-feedback"></span>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>Nota:</strong> Defina comidas em <a asp-controller="Foods" asp-action="Index">Comidas</a> para usar as opções prontas.
                         </div>
 
                         <hr class="my-4" />

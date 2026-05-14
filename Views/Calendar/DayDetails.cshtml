@@ -16,7 +16,7 @@
 <div class="container mt-4">
     <div class="day-details-header">
         <h2>
-            <i class="bi bi-calendar-day"></i>
+            <i class="bi bi-egg-fried"></i>
             @date.ToString("dddd, dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("pt-PT"))
         </h2>
         <a asp-action="Index" asp-route-year="@date.Year" asp-route-month="@date.Month" class="btn btn-outline-secondary">
@@ -103,11 +103,17 @@
                         <div class="text-center text-muted py-5">
                             <i class="bi bi-info-circle" style="font-size: 3rem;"></i>
                             <p class="mt-3">Nenhuma refeição definida para este dia.</p>
-                            @if (isFuncionario && !isPastOrToday)
+                            @if (isFuncionario && !isPastOrToday && date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
                             {
                                 <a asp-action="CreateMeal" asp-route-date="@date.ToString("yyyy-MM-dd")" class="btn btn-primary mt-2">
                                     <i class="bi bi-plus-circle me-2"></i>Definir Refeição
                                 </a>
+                            }
+                            else if (isFuncionario && (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday))
+                            {
+                                <div class="alert alert-secondary mt-3">
+                                    Não é possível definir refeições para fins de semana.
+                                </div>
                             }
                         </div>
                     }

@@ -8,6 +8,8 @@ using System.Diagnostics;
 
 namespace Senhas_Gustave_Eiffel.Controllers
 {
+    // Controlador inicial da aplicação.
+    // Mantém a navegação simples e encaminha o utilizador para o calendário principal.
     [Authorize]
     public class HomeController : Controller
     {
@@ -25,18 +27,20 @@ namespace Senhas_Gustave_Eiffel.Controllers
             _context = context;
         }
 
-        // MODIFICADO: Redireciona para o Calendário
+        // Redireciona o utilizador para a área do calendário.
         public IActionResult Index()
         {
             return RedirectToAction("Index", "Calendar");
         }
 
+        // Mostra a página de política de privacidade.
         [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        // Mostra a página de erro da aplicação.
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

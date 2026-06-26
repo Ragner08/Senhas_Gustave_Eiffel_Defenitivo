@@ -7,6 +7,7 @@ using Senhas_Gustave_Eiffel.Models;
 
 namespace Senhas_Gustave_Eiffel.Controllers
 {
+    // Controlador responsável pela autenticação, gestão de contas e administração de utilizadores.
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -26,6 +27,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             _context = context;
         }
 
+        // Mostra a página de login ao utilizador.
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login(string? returnUrl = null)
@@ -34,6 +36,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View();
         }
 
+        // Valida as credenciais introduzidas e inicia a sessão do utilizador.
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -60,6 +63,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(model);
         }
 
+        // Termina a sessão do utilizador atual.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -68,6 +72,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
+        // Mostra o formulário de criação de utilizadores para administradores.
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult Register()
@@ -76,6 +81,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View();
         }
 
+        // Cria um novo utilizador e associa-lhe o papel escolhido.
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -108,6 +114,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(model);
         }
 
+        // Mostra a lista de utilizadores para gestão administrativa.
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UserManagement()
@@ -133,6 +140,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(userList);
         }
 
+        // Abre a página de edição de um utilizador.
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditUser(string id)
@@ -157,6 +165,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(model);
         }
 
+        // Guarda as alterações feitas na ficha de um utilizador.
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -177,7 +186,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             user.Nome = model.Nome;
             user.Escalao = model.Role;
 
-            // Update role
+            // Atualiza o papel do utilizador.
             var currentRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
             await _userManager.AddToRoleAsync(user, model.Role);
@@ -195,6 +204,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(model);
         }
 
+        // Abre a página para redefinir a palavra-passe de um utilizador.
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ResetPassword(string id)
@@ -215,6 +225,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(model);
         }
 
+        // Guarda a nova palavra-passe do utilizador.
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -244,6 +255,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(model);
         }
 
+        // Elimina um utilizador, exceto o administrador principal.
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -255,7 +267,6 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return NotFound();
             }
 
-            // Don't allow deleting the admin user
             if (user.Email == "admin@epge.pt")
             {
                 TempData["Error"] = "Não é possível eliminar o utilizador administrador principal.";
@@ -276,6 +287,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return RedirectToAction(nameof(UserManagement));
         }
 
+        // Mostra a página de acesso negado.
         [HttpGet]
         [AllowAnonymous]
         public IActionResult AccessDenied()
@@ -299,7 +311,6 @@ namespace Senhas_Gustave_Eiffel.Controllers
             }
             else
             {
-                // MODIFICADO: Redirecionar para o Calendário em vez da Home
                 return RedirectToAction(nameof(CalendarController.Index), "Calendar");
             }
         }

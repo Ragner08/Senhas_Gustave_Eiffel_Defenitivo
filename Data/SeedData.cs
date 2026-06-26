@@ -3,14 +3,16 @@ using Senhas_Gustave_Eiffel.Models;
 
 namespace Senhas_Gustave_Eiffel.Data
 {
+    // Classe responsável por criar dados iniciais na aplicação.
     public static class SeedData
     {
+        // Cria os papéis e os utilizadores base quando a aplicação arranca.
         public static async Task Initialize(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            // Define roles
+            // Define os papéis que a aplicação vai usar.
             string[] roles = { "Admin", "Escalão A", "Escalão B", "Sem escalão", "Funcionário" };
 
             foreach (var role in roles)
@@ -21,7 +23,7 @@ namespace Senhas_Gustave_Eiffel.Data
                 }
             }
 
-            // Create default admin user
+            // Cria o utilizador administrador padrão.
             var adminEmail = "admin@epge.pt";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
@@ -44,7 +46,7 @@ namespace Senhas_Gustave_Eiffel.Data
                 }
             }
 
-            // Create default funcionario user
+            // Cria o utilizador funcionário padrão.
             var funcEmail = "funcionario@epge.pt";
             var funcUser = await userManager.FindByEmailAsync(funcEmail);
 

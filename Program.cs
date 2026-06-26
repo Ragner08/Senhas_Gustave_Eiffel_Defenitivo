@@ -3,16 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using Senhas_Gustave_Eiffel.Data;
 using Senhas_Gustave_Eiffel.Models;
 
+// Ponto de entrada principal da aplicação.
+// Este ficheiro prepara os serviços essenciais, como MVC, autenticação e base de dados.
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Adiciona os controladores e as views ao sistema MVC.
 builder.Services.AddControllersWithViews();
 
-// Add DbContext
+// Configura o contexto da base de dados com SQL Server.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Identity
+// Configura o sistema de identidade para gerir utilizadores, login e papéis.
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -25,7 +27,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Configure Cookie
+// Configura a cookie de autenticação para controlar o login e os acessos.
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -35,27 +37,26 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configura o pipeline da aplicação e o tratamento de erros em ambiente de produção.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
+// Ativa as funcionalidades de HTTPS, ficheiros estáticos e rotas.
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ROTA MODIFICADA: Página inicial agora é o Login
+// Define a rota inicial da aplicação para abrir diretamente a página de login.
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-// Seed roles and admin user (only if database exists)
+// Garante que os papéis e os utilizadores base existam quando a base de dados estiver disponível.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -69,7 +70,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch
     {
-        // Database might not exist yet - migrations need to be run
+        // Se a base de dados ainda não existir, a aplicação fica pronta para as migrações.
     }
 }
 

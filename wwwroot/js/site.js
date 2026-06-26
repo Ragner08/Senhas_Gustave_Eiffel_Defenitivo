@@ -1,6 +1,11 @@
 // Senhas de Almoço EPGE - JavaScript
 
-// Auto-hide alerts after 5 seconds
+// Este ficheiro contém funções e comportamentos adicionais para melhorar a experiência do utilizador.
+// Estas instruções são executadas no browser, ou seja, no lado do cliente, e ajudam a tornar a aplicação mais interativa.
+// O código é ativado quando a página termina de carregar, para garantir que todos os elementos HTML já existem na página.
+
+// Este bloco esconde automaticamente os alertas visíveis após alguns segundos.
+// Serve para limpar mensagens de sucesso ou erro da interface, sem precisar de o utilizador fechar manualmente.
 document.addEventListener('DOMContentLoaded', function() {
     const alerts = document.querySelectorAll('.alert-dismissible');
     alerts.forEach(function(alert) {
@@ -13,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Confirm delete actions
+// Este bloco pede confirmação antes de submeter formulários que eliminam dados.
+// É útil para evitar ações acidentais, como apagar uma marcação ou outro registo importante.
 document.addEventListener('DOMContentLoaded', function() {
     const deleteForms = document.querySelectorAll('form[onsubmit*="confirm"]');
     deleteForms.forEach(function(form) {
@@ -25,7 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Calendar day hover effect enhancement
+// Este bloco cria um efeito visual nos dias do calendário quando o cursor passa por cima.
+// O objetivo é dar um feedback imediato ao utilizador, fazendo o dia parecer mais destacado.
 document.addEventListener('DOMContentLoaded', function() {
     const calendarDays = document.querySelectorAll('.calendar-day');
     calendarDays.forEach(function(day) {
@@ -40,7 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Smooth scroll for anchor links
+// Este bloco faz scroll suave para links internos da página.
+// Quando o utilizador clica num link que aponta para uma âncora, a página desloca-se de forma mais elegante.
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -56,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Form validation enhancement
+// Este bloco melhora a validação dos formulários antes de estes serem enviados ao servidor.
+// Se algum campo obrigatório estiver vazio ou inválido, o formulário é impedido de avançar.
 document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('form');
     forms.forEach(function(form) {
@@ -70,7 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Input formatting for currency fields
+// Este bloco formata automaticamente os valores introduzidos em campos de moeda.
+// Se o utilizador escrever um número, o sistema ajusta-o para duas casas decimais ao sair do campo.
 document.addEventListener('DOMContentLoaded', function() {
     const currencyInputs = document.querySelectorAll('input[type="number"][step="0.01"]');
     currencyInputs.forEach(function(input) {
@@ -83,7 +93,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Tooltip initialization (if Bootstrap tooltips are used)
+// Este bloco inicializa os tooltips do Bootstrap quando existirem elementos com esse atributo.
+// Os tooltips mostram pequenas mensagens informativas quando o utilizador passa o rato por cima de um elemento.
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -93,7 +104,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Table row hover effect
+// Este bloco dá um efeito visual às linhas das tabelas quando o cursor passa por cima.
+// Ajuda a melhorar a leitura dos dados e a destacar a linha selecionada.
 document.addEventListener('DOMContentLoaded', function() {
     const tableRows = document.querySelectorAll('.table-hover tbody tr');
     tableRows.forEach(function(row) {
@@ -106,12 +118,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Print functionality for reports
+// Esta função abre a janela de impressão do navegador para imprimir relatórios ou páginas de dados.
 function printReport() {
     window.print();
 }
 
-// Export to CSV functionality
+// Esta função exporta uma tabela para um ficheiro CSV.
+// É útil para guardar dados em formato de folha de cálculo, por exemplo para relatórios.
 function exportToCSV(tableId, filename) {
     const table = document.getElementById(tableId);
     if (!table) return;
@@ -136,7 +149,8 @@ function exportToCSV(tableId, filename) {
     link.click();
 }
 
-// Search/filter functionality for tables
+// Esta função permite filtrar as linhas de uma tabela conforme o texto introduzido numa caixa de pesquisa.
+// É muito útil para encontrar rapidamente informação em listas longas.
 function filterTable(inputId, tableId) {
     const input = document.getElementById(inputId);
     const table = document.getElementById(tableId);
@@ -153,7 +167,8 @@ function filterTable(inputId, tableId) {
     });
 }
 
-// Date validation for booking forms
+// Este bloco valida datas nos formulários para impedir que o utilizador escolha uma data no passado.
+// Quando a data escolhida é anterior à atual, a seleção é limpa e é mostrado um aviso.
 document.addEventListener('DOMContentLoaded', function() {
     const dateInputs = document.querySelectorAll('input[type="date"]');
     dateInputs.forEach(function(input) {
@@ -170,7 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Loading spinner for form submissions
+// Este bloco mostra um indicador de carregamento quando um formulário está a ser submetido.
+// É uma forma de informar o utilizador que a ação ainda está a ser processada.
 document.addEventListener('DOMContentLoaded', function() {
     const submitButtons = document.querySelectorAll('button[type="submit"]');
     submitButtons.forEach(function(button) {
@@ -185,7 +201,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Copy to clipboard functionality
+// Esta função copia texto para a área de transferência do utilizador.
+// Pode ser usada para facilitar a cópia de dados como códigos ou informação importante.
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(function() {
         alert('Copiado para a área de transferência: ' + text);
@@ -194,7 +211,8 @@ function copyToClipboard(text) {
     });
 }
 
-// Toggle password visibility
+// Esta função mostra ou esconde a palavra-passe num campo de texto.
+// É útil em formulários onde o utilizador quer verificar o que escreveu.
 function togglePasswordVisibility(inputId) {
     const input = document.getElementById(inputId);
     if (input) {
@@ -202,12 +220,14 @@ function togglePasswordVisibility(inputId) {
     }
 }
 
-// Calculate total for booking forms
+// Esta função calcula o total de um valor multiplicado por uma quantidade.
+// É usada para facilitar cálculos simples em formulários ou interfaces de negócio.
 function calculateTotal(price, quantity) {
     return (price * quantity).toFixed(2);
 }
 
-// Format currency display
+// Esta função formata valores em euros para apresentação ao utilizador.
+// Usa o formato de moeda português e permite mostrar valores de forma mais clara.
 function formatCurrency(amount) {
     return new Intl.NumberFormat('pt-PT', {
         style: 'currency',
@@ -215,7 +235,8 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
-// Update wallet balance display
+// Esta função atualiza o saldo visível da carteira em todos os elementos que utilizam a classe wallet-balance.
+// Assim, quando o saldo muda, a interface é atualizada automaticamente.
 function updateWalletBalance(newBalance) {
     const walletElements = document.querySelectorAll('.wallet-balance');
     walletElements.forEach(function(element) {
@@ -223,19 +244,20 @@ function updateWalletBalance(newBalance) {
     });
 }
 
-// Confirm booking cancellation
+// Esta função pede confirmação antes de cancelar uma marcação.
+// Ajuda a evitar cancelamentos acidentais de reservas importantes.
 function confirmCancellation(bookingId) {
     return confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado à sua carteira.');
 }
 
-// Prevent double booking on same day
+// Este bloco faz um controlo simples antes de submeter uma marcação, deixando a validação final ao servidor.
+// Serve como uma primeira verificação no browser, sem substituir a validação da aplicação.
 document.addEventListener('DOMContentLoaded', function() {
     const bookingForms = document.querySelectorAll('form[action*="BookMeal"]');
     bookingForms.forEach(function(form) {
         form.addEventListener('submit', function(e) {
             const dateInput = form.querySelector('input[name="date"]');
             if (dateInput) {
-                // This is a simple check - the server will do the final validation
                 console.log('Booking for date:', dateInput.value);
             }
         });

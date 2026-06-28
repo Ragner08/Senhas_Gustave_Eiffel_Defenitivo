@@ -33,16 +33,6 @@
                             <div class="form-text">Valor mínimo: 0,01€ | Valor máximo: 1000,00€</div>
                         </div>
 
-                        <div class="quick-amounts mb-4">
-                            <label class="form-label">Valores Rápidos:</label>
-                            <div class="d-flex gap-2 flex-wrap">
-                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(5)">5€</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(10)">10€</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(20)">20€</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="setAmount(50)">50€</button>
-                            </div>
-                        </div>
-
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg">
                                 <i class="bi bi-check-circle me-2"></i>Confirmar
@@ -65,9 +55,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        function setAmount(amount) {
-            document.getElementById('Valor').value = amount;
-        }
-    </script>
 }

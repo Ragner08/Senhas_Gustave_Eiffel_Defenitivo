@@ -175,8 +175,8 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# Note: Comment the next line if you want to checkin your web deploy settings,
-# but database connection strings (with potential passwords) will be unencrypted
+# Nota: Comente a próxima linha se quiser commitar as definições de publicação web,
+# mas as strings de ligação à base de dados (com possíveis passwords) ficarão sem encriptação
 *.pubxml
 *.publishproj
 

@@ -9,6 +9,9 @@ using System.Globalization;
 
 namespace Senhas_Gustave_Eiffel.Controllers
 {
+    // Controlador do calendário: constrói a vista do calendário, detalhe do dia
+    // e ações relacionadas com refeições e marcações (BookMeal, CancelBooking,
+    // criação/edição de Meal). Garante validações de datas e calcula preços.
     [Authorize]
     public class CalendarController : Controller
     {
@@ -23,6 +26,9 @@ namespace Senhas_Gustave_Eiffel.Controllers
             _context = context;
         }
 
+        // Mostra o calendário do mês especificado (ou mês atual).
+        // Prepara um `CalendarViewModel` com a lista de `DayViewModel` contendo
+        // flags: `HasMeal`, `HasBooking`, `IsPast`, `IsToday`.
         public async Task<IActionResult> Index(int? year, int? month)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -43,7 +49,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             var daysInMonth = DateTime.DaysInMonth(selectedYear, selectedMonth);
             var startDayOfWeek = (int)firstDayOfMonth.DayOfWeek;
 
-            // Adjust for Monday as first day of week
+            // Ajusta para segunda-feira ser o primeiro dia da semana
             startDayOfWeek = startDayOfWeek == 0 ? 6 : startDayOfWeek - 1;
 
             var viewModel = new CalendarViewModel
@@ -56,19 +62,19 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 WalletBalance = user.WalletBalance
             };
 
-            // Get all bookings for the user in this month
+            // Obtém todas as marcações do utilizador neste mês
             var userBookings = await _context.Bookings
                 .Where(b => b.UserId == user.Id &&
                             b.DataMarcacao.Year == selectedYear &&
                             b.DataMarcacao.Month == selectedMonth)
                 .ToListAsync();
 
-            // Get all meals for this month
+            // Obtém todas as refeições deste mês
             var meals = await _context.Meals
                 .Where(m => m.Data.Year == selectedYear && m.Data.Month == selectedMonth)
                 .ToListAsync();
 
-            // Previous month days
+            // Dias do mês anterior
             var prevMonth = firstDayOfMonth.AddMonths(-1);
             var daysInPrevMonth = DateTime.DaysInMonth(prevMonth.Year, prevMonth.Month);
             for (int i = startDayOfWeek - 1; i >= 0; i--)
@@ -81,12 +87,12 @@ namespace Senhas_Gustave_Eiffel.Controllers
                     IsToday = date.Date == DateTime.Today,
                     HasBooking = false,
                     HasMeal = meals.Any(m => m.Data.Date == date.Date),
-                    // MODIFICADO: IsPast inclui o dia atual (não permite marcação no mesmo dia)
-                    IsPast = date.Date <= DateTime.Today
+                    // IsPast: dias anteriores (exclui o dia atual)
+                    IsPast = date.Date < DateTime.Today
                 });
             }
 
-            // Current month days
+            // Dias do mês atual
             for (int day = 1; day <= daysInMonth; day++)
             {
                 var date = new DateTime(selectedYear, selectedMonth, day);
@@ -99,13 +105,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
                     IsToday = date.Date == DateTime.Today,
                     HasBooking = booking != null,
                     HasMeal = meals.Any(m => m.Data.Date == date.Date),
-                    // MODIFICADO: IsPast inclui o dia atual (não permite marcação no mesmo dia)
-                    IsPast = date.Date <= DateTime.Today,
+                    // IsPast: dias anteriores (exclui o dia atual)
+                    IsPast = date.Date < DateTime.Today,
                     BookingId = booking?.Id
                 });
             }
 
-            // Next month days to fill the grid
+            // Dias do mês seguinte para preencher a grelha
             var remainingDays = 42 - viewModel.Days.Count; // 6 rows * 7 days = 42
             for (int i = 1; i <= remainingDays; i++)
             {
@@ -117,8 +123,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                     IsToday = date.Date == DateTime.Today,
                     HasBooking = false,
                     HasMeal = meals.Any(m => m.Data.Date == date.Date),
-                    // MODIFICADO: IsPast inclui o dia atual (não permite marcação no mesmo dia)
-                    IsPast = date.Date <= DateTime.Today
+                    // IsPast: dias anteriores (exclui o dia atual)
+                    IsPast = date.Date < DateTime.Today
                 });
             }
 
@@ -126,6 +132,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
         }
 
         [HttpGet]
+        // Mostra os detalhes de um dia: refeição definida, existência de
+        // marcação do utilizador, preço calculado consoante o escalão.
         public async Task<IActionResult> DayDetails(DateTime date)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -146,16 +154,9 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             var hasBooking = booking != null;
 
-            // Check if user already has a booking for this day
-            if (hasBooking)
-            {
-                ViewBag.HasBooking = true;
-                ViewBag.BookingId = booking.Id;
-            }
-            else
-            {
-                ViewBag.HasBooking = false;
-            }
+            // Verifica se o utilizador já tem uma marcação para este dia
+            ViewBag.HasBooking = hasBooking;
+            ViewBag.BookingId = booking?.Id;
 
             ViewBag.Date = date;
             ViewBag.IsFuncionario = isFuncionario || isAdmin;
@@ -165,7 +166,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             ViewBag.WalletBalance = user.WalletBalance;
             ViewBag.HasMeal = meal != null;
 
-            // Calculate price based on user's escalão
+            // Calcula o preço com base no escalão do utilizador
             decimal price = user.Escalao switch
             {
                 "Escalão A" => meal?.PrecoEscalaoA ?? 2.00m,
@@ -179,6 +180,9 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // Processa a marcação de uma refeição para o utilizador.
+        // Valida datas, existência de refeição, saldo suficiente e cria
+        // `Booking` + `WalletTransaction` em BD.
         public async Task<IActionResult> BookMeal(DateTime date, string escalao)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -194,7 +198,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return RedirectToAction(nameof(DayDetails), new { date });
             }
 
-            // Check if user already has a booking for this day
+            // Verifica se o utilizador já tem uma marcação para este dia
             var existingBooking = await _context.Bookings
                 .FirstOrDefaultAsync(b => b.UserId == user.Id && b.DataMarcacao.Date == date.Date);
 
@@ -204,7 +208,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return RedirectToAction(nameof(DayDetails), new { date });
             }
 
-            // Check if meal exists for this day
+            // Verifica se existe refeição para este dia
             var meal = await _context.Meals
                 .FirstOrDefaultAsync(m => m.Data.Date == date.Date);
 
@@ -214,7 +218,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return RedirectToAction(nameof(DayDetails), new { date });
             }
 
-            // Calculate price
+            // Calcula o preço
             decimal price = escalao switch
             {
                 "Escalão A" => meal.PrecoEscalaoA,
@@ -222,14 +226,14 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 _ => meal.PrecoSemEscalao
             };
 
-            // Check if user has enough balance
+            // Verifica se o utilizador tem saldo suficiente
             if (user.WalletBalance < price)
             {
                 TempData["Error"] = "Saldo insuficiente na carteira!";
                 return RedirectToAction(nameof(DayDetails), new { date });
             }
 
-            // Create booking
+            // Cria marcação
             var booking = new Booking
             {
                 UserId = user.Id,
@@ -242,7 +246,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             // Deduct from wallet
             user.WalletBalance -= price;
 
-            // Create wallet transaction
+            // Cria transação de carteira
             var transaction = new WalletTransaction
             {
                 UserId = user.Id,
@@ -256,11 +260,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Senha marcada com sucesso!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { year = date.Year, month = date.Month });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // Cancela a marcação do utilizador (apenas para datas futuras).
+        // Reembolsa o valor na carteira e cria transação de reembolso.
         public async Task<IActionResult> CancelBooking(int bookingId)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -277,17 +283,17 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return NotFound();
             }
 
-            // Only allow cancellation for future dates (não permite cancelar hoje ou passado)
+            // Permite cancelar apenas datas futuras (não permite hoje ou passado)
             if (booking.DataMarcacao.Date <= DateTime.Today)
             {
                 TempData["Error"] = "Não é possível cancelar marcações para hoje ou datas passadas!";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Refund the user
+            // Reembolsa o utilizador
             user.WalletBalance += booking.ValorPago;
 
-            // Create wallet transaction for refund
+            // Cria transação de carteira para reembolso
             var transaction = new WalletTransaction
             {
                 UserId = user.Id,
@@ -301,11 +307,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Marcação cancelada com sucesso! O valor foi reembolsado.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { year = booking.DataMarcacao.Year, month = booking.DataMarcacao.Month });
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Abre o formulário de criação de `Meal` para a data indicada.
+        // (Restrito a Admin/Funcionário). Valida datas e fim de semana.
         public async Task<IActionResult> CreateMeal(DateTime date)
         {
             // MODIFICADO: Não permitir criar refeição para hoje, datas passadas ou fim de semana
@@ -330,6 +338,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionário")]
         [ValidateAntiForgeryToken]
+        // Cria a `Meal` no BD após validação (Admin/Funcionário).
         public async Task<IActionResult> CreateMeal(Meal meal)
         {
             if (meal.Data.Date <= DateTime.Today || meal.Data.DayOfWeek == DayOfWeek.Saturday || meal.Data.DayOfWeek == DayOfWeek.Sunday)
@@ -341,7 +350,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             if (ModelState.IsValid)
             {
-                // Check if meal already exists for this day
+                // Verifica se já existe refeição para este dia
                 var existingMeal = await _context.Meals
                     .FirstOrDefaultAsync(m => m.Data.Date == meal.Data.Date);
 
@@ -367,6 +376,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             return View(meal);
         }
 
+        // Preenche ViewBag com listas de alimentos para os selects do formulário.
         private async Task PopulateFoodSelectListsAsync()
         {
             var foods = await _context.Set<FoodItem>().ToListAsync();
@@ -394,6 +404,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Abre o formulário de edição de `Meal` (Admin/Funcionário).
         public async Task<IActionResult> EditMeal(int id)
         {
             var meal = await _context.Meals.FindAsync(id);
@@ -415,6 +426,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionário")]
         [ValidateAntiForgeryToken]
+        // Atualiza a `Meal` após validação (Admin/Funcionário).
         public async Task<IActionResult> EditMeal(int id, Meal meal)
         {
             if (id != meal.Id)

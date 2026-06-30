@@ -6,6 +6,9 @@ using Senhas_Gustave_Eiffel.Models;
 
 namespace Senhas_Gustave_Eiffel.Controllers
 {
+    // Controlador para gestão de itens alimentares (`FoodItem`).
+    // Permite a administração das comidas usadas na definição de menus (Sopa,
+    // Prato Principal, Vegetariano, Sobremesa). Restrito a Admin/Funcionário.
     [Authorize(Roles = "Admin,Funcionário")]
     public class FoodsController : Controller
     {
@@ -16,6 +19,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             _context = context;
         }
 
+        // Lista todos os `FoodItem` disponíveis ordenados por categoria/nome.
         public async Task<IActionResult> Index()
         {
             var foods = await _context.FoodItems
@@ -27,6 +31,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         }
 
         [HttpGet]
+        // Mostra o formulário para criar um novo `FoodItem`.
         public IActionResult Create()
         {
             ViewBag.Categories = new List<string>
@@ -42,6 +47,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // Cria um novo `FoodItem` após validação e guarda no BD.
         public async Task<IActionResult> Create(FoodItem foodItem)
         {
             if (!ModelState.IsValid)

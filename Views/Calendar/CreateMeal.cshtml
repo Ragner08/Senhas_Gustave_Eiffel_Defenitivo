@@ -1,3 +1,7 @@
+@*
+    Vista: Formulário para criar uma `Meal` numa data específica.
+    Utilizado por Admin/Funcionário para definir refeições futuras (não fins de semana).
+*@
 @model Meal
 @using Microsoft.AspNetCore.Mvc.Rendering
 @{
@@ -33,7 +37,7 @@
                             @if (sopaItems.Any())
                             {
                                 <select asp-for="Sopa" class="form-select" asp-items="sopaItems">
-                                    <option value="">-- Selecionar sopa --</option>
+                                    <option value="">Selecione a sopa</option>
                                 </select>
                             }
                             else
@@ -48,7 +52,7 @@
                             @if (pratoPrincipalItems.Any())
                             {
                                 <select asp-for="PratoPrincipal" class="form-select" asp-items="pratoPrincipalItems">
-                                    <option value="">-- Selecionar prato principal --</option>
+                                    <option value="">Selecione o prato principal</option>
                                 </select>
                             }
                             else
@@ -63,7 +67,7 @@
                             @if (vegetarianoItems.Any())
                             {
                                 <select asp-for="Vegetariano" class="form-select" asp-items="vegetarianoItems">
-                                    <option value="">-- Selecionar opção vegetariana --</option>
+                                    <option value="">Selecione a opção vegetariana</option>
                                 </select>
                             }
                             else
@@ -78,7 +82,7 @@
                             @if (sobremesaItems.Any())
                             {
                                 <select asp-for="Sobremesa" class="form-select" asp-items="sobremesaItems">
-                                    <option value="">-- Selecionar sobremesa --</option>
+                                    <option value="">Selecione a sobremesa</option>
                                 </select>
                             }
                             else

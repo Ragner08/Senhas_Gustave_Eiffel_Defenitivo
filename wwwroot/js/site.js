@@ -247,7 +247,7 @@ function updateWalletBalance(newBalance) {
 // Esta função pede confirmação antes de cancelar uma marcação.
 // Ajuda a evitar cancelamentos acidentais de reservas importantes.
 function confirmCancellation(bookingId) {
-    return confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado à sua carteira.');
+    return confirm('Tens certeza que deseja cancelar esta marcação? O valor será reembolsado à sua carteira.');
 }
 
 // Este bloco faz um controlo simples antes de submeter uma marcação, deixando a validação final ao servidor.

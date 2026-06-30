@@ -1,3 +1,7 @@
+@*
+    Vista: Painel inicial do utilizador (dashboard).
+    Mostra refeição de hoje, saldo da carteira, próximas marcações e ações rápidas.
+*@
 @{
     ViewData["Title"] = "Início";
     var upcomingBookings = ViewBag.UpcomingBookings as List<Booking> ?? new List<Booking>();
@@ -14,7 +18,7 @@
     </div>
 
     <div class="row mt-4">
-        <!-- Today's Meal Card -->
+        <!-- Cartão da Refeição de Hoje -->
         <div class="col-md-6 mb-4">
             <div class="card shadow h-100">
                 <div class="card-header bg-success text-white">
@@ -75,7 +79,7 @@
             </div>
         </div>
 
-        <!-- Wallet Card -->
+        <!-- Cartão da Carteira -->
         <div class="col-md-6 mb-4">
             <div class="card shadow h-100">
                 <div class="card-header bg-info text-white">
@@ -99,7 +103,7 @@
         </div>
     </div>
 
-    <!-- Upcoming Bookings -->
+    <!-- Próximas Marcações -->
     <div class="row">
         <div class="col-12">
             <div class="card shadow">
@@ -170,7 +174,7 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
+    <!-- Ações Rápidas -->
     <div class="row mt-4">
         <div class="col-12">
             <div class="card shadow">

@@ -1,3 +1,8 @@
+@*
+    View: Calendário principal. Renderiza grid de dias com classes que indicam
+    disponibilidade de refeição (`has-meal`) e marcações (`has-booking`).
+    Cada dia aponta para `DayDetails`.
+*@
 @model CalendarViewModel
 @{
     ViewData["Title"] = "Calendário de Senhas";
@@ -38,12 +43,29 @@
         <div class="days-grid">
             @foreach (var day in Model.Days)
             {
+                var classes = "day-cell";
+                classes += day.IsCurrentMonth ? "" : " other-month";
+                classes += day.IsToday ? " today" : "";
+                classes += day.IsPast ? " past" : "";
+                classes += day.HasBooking ? " has-booking" : "";
+                classes += day.HasMeal ? " has-meal" : "";
+
+                // Inline style fallback to force background color when CSS is overridden
+                var inlineStyle = "";
+                if (!day.IsPast)
+                {
+                    if (day.HasBooking)
+                    {
+                        inlineStyle = "background-color: #E8F5E9 !important;"; // verde
+                    }
+                    else if (day.HasMeal)
+                    {
+                        inlineStyle = "background-color: #E8F4FD !important;"; // azul claro
+                    }
+                }
+
                 <a asp-action="DayDetails" asp-route-date="@day.Date.ToString("yyyy-MM-dd")"
-                   class="day-cell @(day.IsCurrentMonth ? "" : "other-month")
-                              @(day.IsToday ? "today" : "")
-                              @(day.IsPast ? "past" : "")
-                              @(day.HasBooking ? "has-booking" : "")
-                              @(day.HasMeal ? "has-meal" : "")">
+                   class="@classes" style="@inlineStyle">
                     <span class="day-number">@day.Date.Day</span>
                     @if (day.HasMeal && !day.HasBooking && !day.IsPast)
                     {

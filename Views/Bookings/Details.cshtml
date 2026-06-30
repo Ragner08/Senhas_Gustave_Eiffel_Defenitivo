@@ -1,3 +1,7 @@
+@*
+    Vista: Detalhes de uma marcação específica; mostra info do utilizador, refeição associada
+    e ações permitidas (cancelar/confirmar conforme role).
+*@
 @model Booking
 @{
     ViewData["Title"] = "Detalhes da Senha";
@@ -17,7 +21,7 @@
     </div>
 
     <div class="row">
-        <!-- Booking Info -->
+        <!-- Informações da Marcação -->
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
@@ -75,7 +79,7 @@
             </div>
         </div>
 
-        <!-- Meal Info -->
+        <!-- Informação da Refeição -->
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-success text-white">
@@ -141,7 +145,7 @@
         </div>
     </div>
 
-    <!-- Actions -->
+    <!-- Ações -->
     @if (Model.DataMarcacao > DateTime.Today)
     {
         <div class="row mt-4">

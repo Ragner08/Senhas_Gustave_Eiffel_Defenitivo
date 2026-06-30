@@ -23,7 +23,7 @@ namespace Senhas_Gustave_Eiffel.Models
         [Compare("Password", ErrorMessage = "As palavras-passe não coincidem.")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O role é obrigatório")]
+        [Required(ErrorMessage = "O Escalão é obrigatório")]
         [Display(Name = "Role / Escalão")]
         public string Role { get; set; } = string.Empty;
     }

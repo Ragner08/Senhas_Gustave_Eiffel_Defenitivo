@@ -7,6 +7,8 @@ using Senhas_Gustave_Eiffel.Models;
 
 namespace Senhas_Gustave_Eiffel.Controllers
 {
+    // Controlador da carteira do utilizador: ver saldo, histórico de transações
+    // e operações para adicionar fundos (pelo próprio utilizador ou admin).
     [Authorize]
     public class WalletController : Controller
     {
@@ -21,6 +23,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             _context = context;
         }
 
+        // Mostra o detalhe da carteira do utilizador: saldo atual e transações.
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -44,6 +47,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         }
 
         [HttpGet]
+        // Mostra a vista para adicionar fundos à carteira.
         public IActionResult AddFunds()
         {
             return View();
@@ -51,6 +55,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // Processa o carregamento de fundos pelo utilizador e regista a transação.
         public async Task<IActionResult> AddFunds(WalletViewModel model)
         {
             if (!ModelState.IsValid)
@@ -64,10 +69,10 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Add funds to wallet
+            // Adiciona fundos à carteira
             user.WalletBalance += model.Valor;
 
-            // Create transaction record
+            // Cria registo de transação
             var transaction = new WalletTransaction
             {
                 UserId = user.Id,
@@ -85,6 +90,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Admin/Funcionário: lista todas as transações da carteira (para monitorização).
         public async Task<IActionResult> AllTransactions()
         {
             var transactions = await _context.WalletTransactions
@@ -97,6 +103,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
+        // Admin: mostra os detalhes da carteira de um utilizador específico e o seu histórico.
         public async Task<IActionResult> UserWallet(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -125,6 +132,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
+        // Admin: adiciona fundos à carteira de outro utilizador e regista a transação.
         public async Task<IActionResult> AddFundsAdmin(string userId, decimal valor)
         {
             if (valor <= 0)

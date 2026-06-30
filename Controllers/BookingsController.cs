@@ -7,6 +7,11 @@ using Senhas_Gustave_Eiffel.Models;
 
 namespace Senhas_Gustave_Eiffel.Controllers
 {
+    // Controlador responsável por gerir as marcações (senhas):
+    // - Listagem de marcações (para o utilizador e para admin/funcionário)
+    // - Visualização detalhada de uma marcação
+    // - Confirmação e cancelamento de marcações (admin/funcionário)
+    // - Relatórios diários e operações administrativas sobre refeições
     [Authorize]
     public class BookingsController : Controller
     {
@@ -21,6 +26,9 @@ namespace Senhas_Gustave_Eiffel.Controllers
             _context = context;
         }
 
+        // Mostra a lista de marcações.
+        // - Admin/Funcionário vêem todas as marcações.
+        // - Utilizador normal vê apenas as suas próprias marcações.
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -37,7 +45,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             if (isAdmin || isFuncionario)
             {
-                // Admin and Funcionario can see all bookings
+                // Admin e Funcionário podem ver todas as marcações
                 bookings = await _context.Bookings
                     .Include(b => b.User)
                     .OrderByDescending(b => b.DataMarcacao)
@@ -45,7 +53,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             }
             else
             {
-                // Regular users only see their own bookings
+                // Utentes normais vêem apenas as suas próprias marcações
                 bookings = await _context.Bookings
                     .Where(b => b.UserId == user.Id)
                     .Include(b => b.User)
@@ -60,6 +68,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
         }
 
         [HttpGet]
+        // Mostra os detalhes de uma marcação específica.
+        // Apenas o utilizador dono, Admin ou Funcionário podem ver todos os detalhes.
         public async Task<IActionResult> Details(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -81,13 +91,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return NotFound();
             }
 
-            // Only allow viewing own bookings unless admin or funcionario
+            // Apenas permite ver as próprias marcações, exceto admin ou funcionário
             if (!isAdmin && !isFuncionario && booking.UserId != user.Id)
             {
                 return Forbid();
             }
 
-            // Get meal details for the booking date
+            // Obtém detalhes da refeição para a data da marcação
             var meal = await _context.Meals
                 .FirstOrDefaultAsync(m => m.Data.Date == booking.DataMarcacao.Date);
 
@@ -101,6 +111,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionário")]
         [ValidateAntiForgeryToken]
+        // Marca uma marcação como confirmada (acesso restrito a Admin/Funcionário).
         public async Task<IActionResult> ConfirmBooking(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
@@ -119,6 +130,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionário")]
         [ValidateAntiForgeryToken]
+        // Cancela uma marcação como administrador/funcionário e processa reembolso.
         public async Task<IActionResult> CancelBookingAdmin(int id)
         {
             var booking = await _context.Bookings
@@ -130,13 +142,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return NotFound();
             }
 
-            // Refund the user
+            // Reembolsa o utilizador
             var user = booking.User;
             if (user != null)
             {
                 user.WalletBalance += booking.ValorPago;
 
-                // Create wallet transaction for refund
+                // Cria transação de carteira para reembolso
                 var transaction = new WalletTransaction
                 {
                     UserId = user.Id,
@@ -157,6 +169,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Gera o relatório diário de marcações para uma data (Admin/Funcionário).
         public async Task<IActionResult> DailyReport(DateTime? date)
         {
             var reportDate = date ?? DateTime.Today;
@@ -185,6 +198,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Remove a marcação para um utilizador (Admin/Funcionário) e processa reembolso.
         public async Task<IActionResult> UnmarkMeal(int bookingId)
         {
             var booking = await _context.Bookings
@@ -198,13 +212,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             var mealDate = booking.DataMarcacao.Date;
 
-            // Refund the user
+            // Reembolsa o utilizador
             if (booking.User != null)
             {
                 booking.User.WalletBalance += booking.ValorPago;
             }
 
-            // Create refund transaction
+            // Cria transação de reembolso
             var transaction = new WalletTransaction
             {
                 UserId = booking.UserId,
@@ -224,6 +238,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Abre a vista de edição de uma marcação (Admin/Funcionário).
         public async Task<IActionResult> EditMeal(int id)
         {
             var booking = await _context.Bookings
@@ -240,6 +255,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Atualiza (persist) alterações na marcação (Admin/Funcionário).
         public async Task<IActionResult> UpdateMeal(int id)
         {
             var booking = await _context.Bookings
@@ -259,6 +275,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionário")]
+        // Elimina uma marcação e processa o reembolso (Admin/Funcionário).
         public async Task<IActionResult> DeleteMeal(int bookingId)
         {
             var booking = await _context.Bookings
@@ -272,13 +289,13 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             var mealDate = booking.DataMarcacao.Date;
 
-            // Refund the user
+            // Reembolsa o utilizador
             if (booking.User != null)
             {
                 booking.User.WalletBalance += booking.ValorPago;
             }
 
-            // Create refund transaction
+            // Cria transação de reembolso
             var transaction = new WalletTransaction
             {
                 UserId = booking.UserId,

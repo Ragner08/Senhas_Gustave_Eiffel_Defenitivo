@@ -38,7 +38,7 @@ namespace Senhas_Gustave_Eiffel.Data
                     Escalao = "Admin"
                 };
 
-                var result = await userManager.CreateAsync(adminUser, "Admin123!");
+                var result = await userManager.CreateAsync(adminUser, "Adm");
 
                 if (result.Succeeded)
                 {
@@ -61,7 +61,7 @@ namespace Senhas_Gustave_Eiffel.Data
                     Escalao = "Funcionário"
                 };
 
-                var result = await userManager.CreateAsync(funcUser, "Func123!");
+                var result = await userManager.CreateAsync(funcUser, "Func");
 
                 if (result.Succeeded)
                 {

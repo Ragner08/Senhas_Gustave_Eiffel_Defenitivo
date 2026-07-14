@@ -43,14 +43,14 @@ namespace Senhas_Gustave_Eiffel.Controllers
 
             var query = _context.Bookings.AsQueryable();
 
-            if (isFuncionario)
-            {
-                query = query.Include(b => b.User);
-            }
-            else
+            if (!isAdmin)
             {
                 query = query.Where(b => b.UserId == user.Id)
                     .Include(b => b.User);
+            }
+            else
+            {
+                query = query.Include(b => b.User);
             }
 
             if (date.HasValue)
@@ -93,8 +93,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return NotFound();
             }
 
-            // Apenas permite ver as próprias marcações, exceto funcionários
-            if (!isFuncionario && booking.UserId != user.Id)
+            // Apenas permite ver as próprias marcações, exceto administradores
+            if (!isAdmin && booking.UserId != user.Id)
             {
                 return Forbid();
             }

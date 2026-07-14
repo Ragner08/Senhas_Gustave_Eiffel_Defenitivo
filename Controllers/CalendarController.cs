@@ -420,6 +420,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            await PopulateFoodSelectListsAsync();
             return View(meal);
         }
 
@@ -438,6 +439,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
             if (meal.Data.Date <= DateTime.Today)
             {
                 TempData["Error"] = "Não é possível editar refeições para hoje ou datas passadas!";
+                await PopulateFoodSelectListsAsync();
                 return View(meal);
             }
 
@@ -459,6 +461,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                     throw;
                 }
             }
+
+            await PopulateFoodSelectListsAsync();
             return View(meal);
         }
 

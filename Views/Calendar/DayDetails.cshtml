@@ -207,9 +207,12 @@
                     {
                         <hr class="my-3" />
                         <h6 class="mb-2"><i class="bi bi-gear me-2"></i>Ações de Funcionário</h6>
-                        <a asp-action="EditMeal" asp-route-id="@Model.Id" class="btn btn-outline-primary w-100">
-                            <i class="bi bi-pencil me-2"></i>Editar Refeição
-                        </a>
+                        <form asp-action="EditMeal" method="get" class="mt-3">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-secondary w-100 btn-lg text-dark">
+                                <i class="bi bi-pencil me-2"></i>Editar Refeição
+                            </button>
+                        </form>
                     }
                 </div>
             </div>

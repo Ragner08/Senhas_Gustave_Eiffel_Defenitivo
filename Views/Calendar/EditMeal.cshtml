@@ -3,6 +3,7 @@
     Acesso restrito a Admin/Funcionário.
 *@
 @model Meal
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
     ViewData["Title"] = "Editar Refeição";
 }
@@ -30,25 +31,73 @@
 
                         <div class="form-group">
                             <label asp-for="Sopa" class="form-label">Sopa</label>
-                            <input asp-for="Sopa" class="form-control" placeholder="Digite a sopa do dia" />
+                            @{
+                                var sopaItems = ViewBag.SopaItems as List<SelectListItem> ?? new List<SelectListItem>();
+                            }
+                            @if (sopaItems.Any())
+                            {
+                                <select asp-for="Sopa" class="form-select" asp-items="sopaItems">
+                                    <option value="">Selecione a sopa</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="Sopa" class="form-control" placeholder="Digite a sopa do dia" />
+                            }
                             <span asp-validation-for="Sopa" class="invalid-feedback"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="PratoPrincipal" class="form-label">Prato Principal</label>
-                            <input asp-for="PratoPrincipal" class="form-control" placeholder="Digite o prato principal" />
+                            @{
+                                var pratoPrincipalItems = ViewBag.PratoPrincipalItems as List<SelectListItem> ?? new List<SelectListItem>();
+                            }
+                            @if (pratoPrincipalItems.Any())
+                            {
+                                <select asp-for="PratoPrincipal" class="form-select" asp-items="pratoPrincipalItems">
+                                    <option value="">Selecione o prato principal</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="PratoPrincipal" class="form-control" placeholder="Digite o prato principal" />
+                            }
                             <span asp-validation-for="PratoPrincipal" class="invalid-feedback"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="Vegetariano" class="form-label">Opção Vegetariana</label>
-                            <input asp-for="Vegetariano" class="form-control" placeholder="Digite a opção vegetariana" />
+                            @{
+                                var vegetarianoItems = ViewBag.VegetarianoItems as List<SelectListItem> ?? new List<SelectListItem>();
+                            }
+                            @if (vegetarianoItems.Any())
+                            {
+                                <select asp-for="Vegetariano" class="form-select" asp-items="vegetarianoItems">
+                                    <option value="">Selecione a opção vegetariana</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="Vegetariano" class="form-control" placeholder="Digite a opção vegetariana" />
+                            }
                             <span asp-validation-for="Vegetariano" class="invalid-feedback"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="Sobremesa" class="form-label">Sobremesa</label>
-                            <input asp-for="Sobremesa" class="form-control" placeholder="Digite a sobremesa" />
+                            @{
+                                var sobremesaItems = ViewBag.SobremesaItems as List<SelectListItem> ?? new List<SelectListItem>();
+                            }
+                            @if (sobremesaItems.Any())
+                            {
+                                <select asp-for="Sobremesa" class="form-select" asp-items="sobremesaItems">
+                                    <option value="">Selecione a sobremesa</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input asp-for="Sobremesa" class="form-control" placeholder="Digite a sobremesa" />
+                            }
                             <span asp-validation-for="Sobremesa" class="invalid-feedback"></span>
                         </div>
 

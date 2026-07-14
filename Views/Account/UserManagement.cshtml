@@ -18,7 +18,22 @@
     </div>
 
     <div class="card shadow">
-        <div class="card-body p-0">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end mb-4">
+                <div class="col-md-8">
+                    <label for="searchTerm" class="form-label">Pesquisar por nome</label>
+                    <input type="text" class="form-control" id="searchTerm" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Digite o nome do utilizador" />
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-2"></i>Filtrar
+                    </button>
+                    <a asp-action="UserManagement" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Limpar
+                    </a>
+                </div>
+            </form>
+
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
@@ -63,10 +78,10 @@
                                         </a>
                                         @if (user.Email != "admin@epge.pt")
                                         {
-                                            <form asp-action="DeleteUser" method="post" class="d-inline"
-                                                  onsubmit="return confirm('Tem certeza que deseja eliminar este utilizador?');">
+                                            <form asp-action="DeleteUser" method="post" class="d-inline">
                                                 <input type="hidden" name="id" value="@user.Id" />
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                                        onclick="if (confirm('Tens a certeza que queres eliminar?')) { this.closest('form').submit(); }">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -88,3 +103,4 @@
         </div>
     </div>
 </div>
+

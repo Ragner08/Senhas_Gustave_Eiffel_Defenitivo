@@ -117,7 +117,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         // Mostra a lista de utilizadores para gestão administrativa.
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UserManagement()
+        public async Task<IActionResult> UserManagement(string searchTerm)
         {
             var users = await _userManager.Users.ToListAsync();
             var userList = new List<UserManagementViewModel>();
@@ -137,6 +137,15 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 });
             }
 
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.Trim();
+                userList = userList
+                    .Where(u => u.Nome.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            ViewBag.SearchTerm = searchTerm;
             return View(userList);
         }
 

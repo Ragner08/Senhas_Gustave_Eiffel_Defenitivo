@@ -27,9 +27,9 @@ namespace Senhas_Gustave_Eiffel.Controllers
         }
 
         // Mostra a lista de marcações.
-        // - Admin/Funcionário vêem todas as marcações.
-        // - Utilizador normal vê apenas as suas próprias marcações.
-        public async Task<IActionResult> Index()
+        // - Funcionários vêem todas as marcações.
+        // - Administradores e utilizadores normais vêem apenas as suas próprias marcações.
+        public async Task<IActionResult> Index(DateTime? date)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -41,28 +41,30 @@ namespace Senhas_Gustave_Eiffel.Controllers
             var isAdmin = roles.Contains("Admin");
             var isFuncionario = roles.Contains("Funcionário");
 
-            List<Booking> bookings;
+            var query = _context.Bookings.AsQueryable();
 
-            if (isAdmin || isFuncionario)
+            if (isFuncionario)
             {
-                // Admin e Funcionário podem ver todas as marcações
-                bookings = await _context.Bookings
-                    .Include(b => b.User)
-                    .OrderByDescending(b => b.DataMarcacao)
-                    .ToListAsync();
+                query = query.Include(b => b.User);
             }
             else
             {
-                // Utentes normais vêem apenas as suas próprias marcações
-                bookings = await _context.Bookings
-                    .Where(b => b.UserId == user.Id)
-                    .Include(b => b.User)
-                    .OrderByDescending(b => b.DataMarcacao)
-                    .ToListAsync();
+                query = query.Where(b => b.UserId == user.Id)
+                    .Include(b => b.User);
             }
+
+            if (date.HasValue)
+            {
+                query = query.Where(b => b.DataMarcacao.Date == date.Value.Date);
+            }
+
+            var bookings = await query
+                .OrderByDescending(b => b.DataMarcacao)
+                .ToListAsync();
 
             ViewBag.IsAdmin = isAdmin;
             ViewBag.IsFuncionario = isFuncionario;
+            ViewBag.FilterDate = date;
 
             return View(bookings);
         }
@@ -91,8 +93,8 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 return NotFound();
             }
 
-            // Apenas permite ver as próprias marcações, exceto admin ou funcionário
-            if (!isAdmin && !isFuncionario && booking.UserId != user.Id)
+            // Apenas permite ver as próprias marcações, exceto funcionários
+            if (!isFuncionario && booking.UserId != user.Id)
             {
                 return Forbid();
             }

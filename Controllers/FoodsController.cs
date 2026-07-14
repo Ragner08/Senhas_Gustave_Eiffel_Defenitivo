@@ -20,13 +20,22 @@ namespace Senhas_Gustave_Eiffel.Controllers
         }
 
         // Lista todos os `FoodItem` disponíveis ordenados por categoria/nome.
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            var foods = await _context.FoodItems
+            var query = _context.FoodItems.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.Trim();
+                query = query.Where(f => f.Nome.Contains(term));
+            }
+
+            var foods = await query
                 .OrderBy(f => f.Categoria)
                 .ThenBy(f => f.Nome)
                 .ToListAsync();
 
+            ViewBag.SearchTerm = searchTerm;
             return View(foods);
         }
 

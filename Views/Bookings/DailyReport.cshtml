@@ -167,7 +167,7 @@
                                             <a asp-action="EditMeal" asp-route-id="@booking.Id" class="btn btn-info" title="Editar refeição">
                                                 <i class="bi bi-pencil me-1"></i>Editar
                                             </a>
-                                            <form asp-action="UnmarkMeal" asp-route-bookingId="@booking.Id" method="post" style="display:inline;">
+                                            <form asp-action="UnmarkMeal" asp-route-bookingId="@booking.Id" method="post" style="display:inline;" onsubmit="return confirm('Tens a certeza que queres desmarcar?');">
                                                 <button type="submit" class="btn btn-warning" title="Desmarcar refeição">
                                                     <i class="bi bi-x-circle me-1"></i>Desmarcar
                                                 </button>
@@ -195,3 +195,4 @@
         </div>
     </div>
 </div>
+

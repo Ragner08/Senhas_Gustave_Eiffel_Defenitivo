@@ -160,20 +160,20 @@
                         <p>Esta marcação pode ser cancelada. O valor será reembolsado à carteira do utilizador.</p>
                         @if (isAdmin || isFuncionario)
                         {
-                            <form asp-action="CancelBookingAdmin" method="post" class="d-inline"
-                                  onsubmit="return confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado.');">
+                            <form asp-action="CancelBookingAdmin" method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@Model.Id" />
-                                <button type="submit" class="btn btn-danger">
+                                <button type="button" class="btn btn-danger"
+                                        onclick="if (confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado.')) { this.closest('form').submit(); }">
                                     <i class="bi bi-x-circle me-2"></i>Pedir Reembolso / Cancelar
                                 </button>
                             </form>
                         }
                         else
                         {
-                            <form asp-controller="Calendar" asp-action="CancelBooking" method="post" class="d-inline"
-                                  onsubmit="return confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado.');">
+                            <form asp-controller="Calendar" asp-action="CancelBooking" method="post" class="d-inline">
                                 <input type="hidden" name="bookingId" value="@Model.Id" />
-                                <button type="submit" class="btn btn-danger">
+                                <button type="button" class="btn btn-danger"
+                                        onclick="if (confirm('Tem certeza que deseja cancelar esta marcação? O valor será reembolsado.')) { this.closest('form').submit(); }">
                                     <i class="bi bi-x-circle me-2"></i>Pedir Reembolso / Cancelar
                                 </button>
                             </form>

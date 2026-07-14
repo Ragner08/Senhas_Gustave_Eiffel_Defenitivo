@@ -21,12 +21,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // Este bloco pede confirmação antes de submeter formulários que eliminam dados.
 // É útil para evitar ações acidentais, como apagar uma marcação ou outro registo importante.
 document.addEventListener('DOMContentLoaded', function() {
-    const deleteForms = document.querySelectorAll('form[onsubmit*="confirm"]');
-    deleteForms.forEach(function(form) {
-        form.addEventListener('submit', function(e) {
-            if (!confirm('Tem certeza que deseja realizar esta ação?')) {
-                e.preventDefault();
+    document.querySelectorAll('.confirm-action').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            const form = this.closest('form');
+            if (!form) {
+                return;
             }
+
+            const message = this.getAttribute('data-confirm-message') || 'Tens a certeza que queres continuar?';
+            if (!window.confirm(message)) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            }
+
+            form.submit();
         });
     });
 });

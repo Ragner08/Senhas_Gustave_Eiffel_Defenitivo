@@ -41,21 +41,24 @@ namespace Senhas_Gustave_Eiffel.Controllers
             {
                 if (transactionType == "Carregamento")
                 {
-                    query = query.Where(wt => wt.Tipo.Contains("Carregamento", StringComparison.OrdinalIgnoreCase));
+                    query = query.Where(wt => wt.Tipo != null && wt.Tipo.ToLower().Contains("carregamento"));
                 }
                 else if (transactionType == "Refeição")
                 {
-                    query = query.Where(wt =>
-                        wt.Descricao.Contains("senha", StringComparison.OrdinalIgnoreCase) ||
-                        wt.Descricao.Contains("refeição", StringComparison.OrdinalIgnoreCase) ||
-                        wt.Descricao.Contains("pagamento", StringComparison.OrdinalIgnoreCase) ||
-                        wt.Descricao.Contains("reembolso", StringComparison.OrdinalIgnoreCase));
+                    query = query.Where(wt => wt.Descricao != null && (
+                        wt.Descricao.ToLower().Contains("senha") ||
+                        wt.Descricao.ToLower().Contains("refeição") ||
+                        wt.Descricao.ToLower().Contains("pagamento") ||
+                        wt.Descricao.ToLower().Contains("reembolso")
+                    ));
                 }
             }
 
             if (date.HasValue)
             {
-                query = query.Where(wt => wt.DataTransacao.Date == date.Value.Date);
+                var start = date.Value.Date;
+                var end = start.AddDays(1);
+                query = query.Where(wt => wt.DataTransacao >= start && wt.DataTransacao < end);
             }
 
             var transactions = await query
@@ -129,21 +132,24 @@ namespace Senhas_Gustave_Eiffel.Controllers
             {
                 if (transactionType == "Carregamento")
                 {
-                    query = query.Where(wt => wt.Tipo.Contains("Carregamento", StringComparison.OrdinalIgnoreCase));
+                    query = query.Where(wt => wt.Tipo != null && wt.Tipo.ToLower().Contains("carregamento"));
                 }
                 else if (transactionType == "Refeição")
                 {
-                    query = query.Where(wt =>
-                        wt.Descricao.Contains("senha", StringComparison.OrdinalIgnoreCase) ||
-                        wt.Descricao.Contains("refeição", StringComparison.OrdinalIgnoreCase) ||
-                        wt.Descricao.Contains("pagamento", StringComparison.OrdinalIgnoreCase) ||
-                        wt.Descricao.Contains("reembolso", StringComparison.OrdinalIgnoreCase));
+                    query = query.Where(wt => wt.Descricao != null && (
+                        wt.Descricao.ToLower().Contains("senha") ||
+                        wt.Descricao.ToLower().Contains("refeição") ||
+                        wt.Descricao.ToLower().Contains("pagamento") ||
+                        wt.Descricao.ToLower().Contains("reembolso")
+                    ));
                 }
             }
 
             if (date.HasValue)
             {
-                query = query.Where(wt => wt.DataTransacao.Date == date.Value.Date);
+                var start = date.Value.Date;
+                var end = start.AddDays(1);
+                query = query.Where(wt => wt.DataTransacao >= start && wt.DataTransacao < end);
             }
 
             if (!string.IsNullOrWhiteSpace(userName))

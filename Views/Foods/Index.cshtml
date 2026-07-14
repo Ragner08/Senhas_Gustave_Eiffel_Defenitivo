@@ -19,12 +19,21 @@
 
     <div class="card shadow">
         <div class="card-body">
-            <form method="get" class="row g-3 align-items-end mb-4">
-                <div class="col-md-8">
+            <form method="get" class="row g-3 align-items-end mb-4 filter-row">
+                <div class="col-md-5">
                     <label for="searchTerm" class="form-label">Pesquisar por nome</label>
                     <input type="text" class="form-control" id="searchTerm" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Digite o nome da comida" />
                 </div>
-                <div class="col-md-4 d-flex gap-2">
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Categoria</label>
+                    <select id="category" name="category" class="form-select">
+                        @foreach (var cat in (List<string>)ViewBag.Categories)
+                        {
+                            <option value="@cat" selected="@(ViewBag.SelectedCategory == cat ? "selected" : null)">@cat</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-search me-2"></i>Filtrar
                     </button>

@@ -176,23 +176,8 @@ function filterTable(inputId, tableId) {
     });
 }
 
-// Este bloco valida datas nos formulários para impedir que o utilizador escolha uma data no passado.
-// Quando a data escolhida é anterior à atual, a seleção é limpa e é mostrado um aviso.
-document.addEventListener('DOMContentLoaded', function() {
-    const dateInputs = document.querySelectorAll('input[type="date"]');
-    dateInputs.forEach(function(input) {
-        input.addEventListener('change', function() {
-            const selectedDate = new Date(this.value);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            if (selectedDate < today) {
-                alert('Não é possível selecionar uma data no passado!');
-                this.value = '';
-            }
-        });
-    });
-});
+// Nota: Validação de datas no passado removida por pedido do utilizador.
+// A validação final permanece no servidor; deixamos controlo do lado-cliente menos intrusivo.
 
 // Este bloco mostra um indicador de carregamento quando um formulário está a ser submetido.
 // É uma forma de informar o utilizador que a ação ainda está a ser processada.

@@ -119,7 +119,7 @@ namespace Senhas_Gustave_Eiffel.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin,Funcionário")]
         // Admin/Funcionário: lista todas as transações da carteira (para monitorização).
-        public async Task<IActionResult> AllTransactions(string transactionType, DateTime? date)
+        public async Task<IActionResult> AllTransactions(string transactionType, DateTime? date, string userName)
         {
             var query = _context.WalletTransactions
                 .Include(wt => wt.User)
@@ -146,12 +146,19 @@ namespace Senhas_Gustave_Eiffel.Controllers
                 query = query.Where(wt => wt.DataTransacao.Date == date.Value.Date);
             }
 
+            if (!string.IsNullOrWhiteSpace(userName))
+            {
+                var term = userName.Trim();
+                query = query.Where(wt => wt.User != null && wt.User.Nome.Contains(term));
+            }
+
             var transactions = await query
                 .OrderByDescending(wt => wt.DataTransacao)
                 .ToListAsync();
 
             ViewBag.TransactionType = transactionType;
             ViewBag.FilterDate = date;
+            ViewBag.UserName = userName;
 
             return View(transactions);
         }

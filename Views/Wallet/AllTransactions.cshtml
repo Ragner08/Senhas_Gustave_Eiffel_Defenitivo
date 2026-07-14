@@ -19,8 +19,8 @@
 
     <div class="card shadow">
         <div class="card-body">
-            <form method="get" class="row g-3 align-items-end mb-4">
-                <div class="col-md-5">
+            <form method="get" class="row g-3 align-items-end mb-4 filter-row">
+                <div class="col-md-4">
                     <label for="transactionType" class="form-label">Tipo de movimento</label>
                     <select class="form-select" id="transactionType" name="transactionType">
                         <option value="Todos" selected="@(ViewBag.TransactionType == null || ViewBag.TransactionType == "Todos" ? "selected" : null)">Todos</option>
@@ -28,11 +28,15 @@
                         <option value="Refeição" selected="@(ViewBag.TransactionType == "Refeição" ? "selected" : null)">Refeição</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="date" class="form-label">Filtrar por data</label>
                     <input type="date" class="form-control" id="date" name="date" value="@(ViewBag.FilterDate?.ToString("yyyy-MM-dd"))" />
                 </div>
-                <div class="col-md-3 d-flex gap-2">
+                <div class="col-md-3">
+                    <label for="userName" class="form-label">Nome do utilizador</label>
+                    <input type="text" class="form-control" id="userName" name="userName" value="@(ViewBag.UserName ?? String.Empty)" placeholder="Pesquisar por nome" />
+                </div>
+                <div class="col-md-2 d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-search me-2"></i>Filtrar
                     </button>
